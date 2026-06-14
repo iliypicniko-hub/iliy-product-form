@@ -3,237 +3,465 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>商品確定フォーム</title>
+  <title>ご注文フォーム — iliy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400&family=Noto+Sans+JP:wght@300;400&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', sans-serif;
-      background: #f5f5f5;
-      padding: 16px;
-      color: #333;
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #F7F5F2; --surface: #FDFCFB; --border: #E2DED9;
+      --border-focus: #9C8878; --text-main: #5A5248; --text-sub: #9C9188;
+      --text-hint: #BBB5AF; --accent: #7D6558; --selected-bg: #F3EDE8; --error: #B97A6A;
     }
-    .card {
-      background: #fff;
-      border-radius: 12px;
-      padding: 24px;
-      max-width: 480px;
-      margin: 0 auto;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-    h1 { font-size: 18px; font-weight: bold; margin-bottom: 4px; }
-    .subtitle { font-size: 13px; color: #666; margin-bottom: 24px; line-height: 1.6; }
-    .field { margin-bottom: 20px; }
-    label.field-label {
-      display: block;
-      font-size: 14px;
-      font-weight: bold;
-      margin-bottom: 6px;
-    }
-    .required { color: #e53e3e; margin-left: 4px; }
-    input[type="text"],
-    input[type="date"],
-    textarea {
-      width: 100%;
-      border: 1.5px solid #ddd;
-      border-radius: 8px;
-      padding: 10px 12px;
-      font-size: 15px;
-      outline: none;
-      transition: border-color 0.2s;
-      font-family: inherit;
-    }
-    input[type="text"]:focus,
-    input[type="date"]:focus,
-    textarea:focus { border-color: #4a90d9; }
-    textarea { resize: vertical; min-height: 80px; }
-    .radio-group { display: flex; flex-direction: column; gap: 10px; }
-    .radio-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 14px;
-      border: 1.5px solid #ddd;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: border-color 0.2s, background 0.2s;
-      font-size: 15px;
-    }
-    .radio-item:hover { border-color: #4a90d9; background: #f0f7ff; }
-    .radio-item input[type="radio"] { accent-color: #4a90d9; width: 16px; height: 16px; flex-shrink: 0; }
-    .radio-item.selected { border-color: #4a90d9; background: #f0f7ff; }
-    .error { color: #e53e3e; font-size: 13px; margin-top: 4px; display: none; }
-    .error.show { display: block; }
-    .address-field { display: none; }
+    body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; padding: 48px 16px 80px; color: var(--text-main); }
+    .site-header { width: 100%; max-width: 520px; margin-bottom: 48px;
+      display: flex; justify-content: space-between; align-items: baseline; }
+    .logo { font-family: 'Noto Serif JP', serif; font-weight: 300; font-size: 15px; letter-spacing: .15em; color: var(--text-sub); }
+    .logo-sub { font-size: 11px; letter-spacing: .1em; color: var(--text-hint); }
+    .card { background: var(--surface); width: 100%; max-width: 520px; padding: 40px 36px 48px; border: .5px solid var(--border); }
+    .form-eyebrow { font-size: 10px; letter-spacing: .2em; color: var(--text-hint); margin-bottom: 10px; }
+    .form-title { font-family: 'Noto Serif JP', serif; font-weight: 300; font-size: 20px;
+      letter-spacing: .08em; color: var(--text-sub); margin-bottom: 8px; line-height: 1.5; }
+    .form-desc { font-size: 12px; color: var(--text-hint); line-height: 2; margin-bottom: 40px;
+      letter-spacing: .05em; font-weight: 300; }
+    .divider { border: none; border-top: .5px solid var(--border); margin: 32px 0; }
+    .field { margin-bottom: 28px; }
+    .field-label { display: flex; align-items: center; gap: 6px; font-size: 11px;
+      letter-spacing: .12em; color: var(--text-sub); margin-bottom: 10px; }
+    .required-mark { font-size: 10px; color: var(--error); letter-spacing: 0; }
+    input[type="text"], input[type="date"], textarea {
+      width: 100%; border: none; border-bottom: .5px solid var(--border);
+      padding: 10px 0; font-size: 14px; font-family: 'Noto Sans JP', sans-serif;
+      font-weight: 300; color: var(--text-main); background: transparent; outline: none;
+      transition: border-color .2s; letter-spacing: .03em; }
+    input:focus, textarea:focus { border-color: var(--border-focus); }
+    input::placeholder, textarea::placeholder { color: var(--text-hint); font-size: 12px; }
+    textarea { resize: none; min-height: 72px; }
+    .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .product-card { border: .5px solid var(--border); cursor: pointer;
+      transition: border-color .2s; overflow: hidden; position: relative; }
+    .product-card:hover { border-color: var(--border-focus); }
+    .product-card.selected { border-color: var(--accent); }
+    .product-card.selected::after { content: '✓'; position: absolute; top: 8px; right: 10px;
+      font-size: 11px; color: var(--accent); }
+    .product-img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; }
+    .product-img-placeholder { width: 100%; aspect-ratio: 4/3; background: #EDE9E4;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 9px; letter-spacing: .15em; color: var(--text-hint); }
+    .product-info { padding: 12px 14px 14px; }
+    .product-name { font-size: 12px; letter-spacing: .08em; color: var(--text-main); font-weight: 400; margin-bottom: 4px; }
+    .product-price { font-size: 11px; color: var(--text-hint); letter-spacing: .05em; font-weight: 300; }
+    .error-msg { font-size: 11px; color: var(--error); margin-top: 6px; letter-spacing: .05em; display: none; }
+    .error-msg.show { display: block; }
+    .radio-group { display: flex; flex-direction: column; gap: 8px; }
+    .radio-item { display: flex; align-items: center; gap: 12px; padding: 13px 16px;
+      border: .5px solid var(--border); cursor: pointer; transition: border-color .2s, background .2s;
+      font-size: 13px; letter-spacing: .05em; color: var(--text-main); font-weight: 300; }
+    .radio-item:hover { border-color: var(--border-focus); background: var(--selected-bg); }
+    .radio-item.selected { border-color: var(--accent); background: var(--selected-bg); }
+    .radio-dot { width: 14px; height: 14px; border: .5px solid var(--border); border-radius: 50%;
+      flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: border-color .2s; }
+    .radio-item.selected .radio-dot { border-color: var(--accent); }
+    .radio-dot::after { content: ''; width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent); opacity: 0; transition: opacity .2s; }
+    .radio-item.selected .radio-dot::after { opacity: 1; }
+    .radio-item input[type="radio"] { display: none; }
+    .address-field { display: none; margin-top: 16px; }
     .address-field.show { display: block; }
-    .btn {
-      width: 100%;
-      background: #4a90d9;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      padding: 14px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 8px;
-      transition: background 0.2s;
-    }
-    .btn:hover:not(:disabled) { background: #357abd; }
-    .btn:disabled { background: #aaa; cursor: not-allowed; }
-    .success-card { text-align: center; padding: 40px 24px; }
-    .success-icon { font-size: 48px; margin-bottom: 16px; }
-    .success-title { font-size: 20px; font-weight: bold; margin-bottom: 12px; }
-    .success-msg { font-size: 14px; color: #666; line-height: 1.8; }
+    .btn-wrap { margin-top: 40px; }
+    .btn { width: 100%; background: transparent; color: var(--accent);
+      border: .5px solid var(--accent); padding: 16px;
+      font-size: 12px; font-family: 'Noto Sans JP', sans-serif;
+      font-weight: 300; letter-spacing: .2em; cursor: pointer; transition: background .2s, color .2s; }
+    .btn:hover:not(:disabled) { background: var(--accent); color: #fff; }
+    .btn:disabled { opacity: .4; cursor: not-allowed; }
+    .success-card { background: var(--surface); width: 100%; max-width: 520px;
+      padding: 64px 36px; border: .5px solid var(--border); text-align: center; display: none; }
+    .success-mark { font-size: 11px; letter-spacing: .2em; color: var(--text-hint); margin-bottom: 24px; }
+    .success-title { font-family: 'Noto Serif JP', serif; font-weight: 300; font-size: 20px;
+      color: var(--text-main); margin-bottom: 20px; letter-spacing: .05em; }
+    .success-msg { font-size: 12px; color: var(--text-sub); line-height: 2.2; letter-spacing: .05em; }
+    .site-footer { margin-top: 48px; font-size: 10px; letter-spacing: .15em; color: var(--text-hint);
+      display: flex; flex-direction: column; align-items: center; gap: 16px; }
+    .edit-trigger { background: none; border: none; cursor: pointer; font-size: 9px;
+      letter-spacing: .15em; color: transparent; padding: 8px 16px; user-select: none; }
+    .edit-trigger:hover { color: var(--text-hint); }
+    .admin-overlay { display: none; position: fixed; inset: 0; background: rgba(90,82,72,.45);
+      z-index: 100; overflow-y: auto; padding: 32px 16px; }
+    .admin-overlay.open { display: block; }
+    .admin-panel { background: var(--surface); border: .5px solid var(--border);
+      width: 100%; max-width: 560px; padding: 36px 32px 40px; margin: 0 auto; }
+    .admin-title { font-family: 'Noto Serif JP', serif; font-weight: 300; font-size: 16px;
+      letter-spacing: .1em; color: var(--text-main); margin-bottom: 4px; }
+    .admin-sub { font-size: 11px; color: var(--text-hint); letter-spacing: .05em; margin-bottom: 28px; }
+    .admin-section { margin-bottom: 24px; }
+    .admin-label { font-size: 10px; letter-spacing: .15em; color: var(--text-sub); margin-bottom: 8px; }
+    .admin-input { width: 100%; border: none; border-bottom: .5px solid var(--border);
+      padding: 8px 0; font-size: 13px; font-family: 'Noto Sans JP', sans-serif;
+      font-weight: 300; color: var(--text-main); background: transparent; outline: none; }
+    .admin-input:focus { border-color: var(--border-focus); }
+    .admin-textarea { width: 100%; border: .5px solid var(--border); padding: 10px 12px;
+      font-size: 12px; font-family: 'Noto Sans JP', sans-serif; font-weight: 300;
+      color: var(--text-main); background: transparent; outline: none; resize: none;
+      min-height: 60px; margin-top: 4px; }
+    .admin-textarea:focus { border-color: var(--border-focus); }
+    .products-admin-list { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
+    .product-admin-item { border: .5px solid var(--border); padding: 14px 16px;
+      display: grid; grid-template-columns: 20px 1fr auto; gap: 12px; align-items: start; }
+    .drag-handle { cursor: grab; color: var(--text-hint); font-size: 14px; padding-top: 2px; user-select: none; }
+    .drag-handle:active { cursor: grabbing; }
+    .product-admin-fields { display: flex; flex-direction: column; gap: 8px; }
+    .product-admin-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .admin-field-label { font-size: 9px; letter-spacing: .12em; color: var(--text-hint); margin-bottom: 3px; }
+    .product-admin-input { width: 100%; border: none; border-bottom: .5px solid var(--border);
+      padding: 5px 0; font-size: 12px; font-family: 'Noto Sans JP', sans-serif;
+      font-weight: 300; color: var(--text-main); background: transparent; outline: none; }
+    .product-admin-input:focus { border-color: var(--border-focus); }
+    .product-delete-btn { background: none; border: none; cursor: pointer; font-size: 16px;
+      color: var(--text-hint); padding: 0 4px; line-height: 1; }
+    .product-delete-btn:hover { color: var(--error); }
+    .add-product-btn { width: 100%; padding: 12px; border: .5px dashed var(--border);
+      background: none; cursor: pointer; font-size: 11px; letter-spacing: .1em;
+      color: var(--text-sub); margin-top: 4px; transition: border-color .2s, color .2s; }
+    .add-product-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .admin-actions { display: flex; gap: 10px; margin-top: 28px; }
+    .admin-btn { flex: 1; padding: 14px; border: .5px solid var(--accent); background: none;
+      font-size: 11px; letter-spacing: .15em; color: var(--accent); cursor: pointer; transition: background .2s, color .2s; }
+    .admin-btn:hover { background: var(--accent); color: #fff; }
+    .admin-btn-cancel { flex: 1; padding: 14px; border: .5px solid var(--border); background: none;
+      font-size: 11px; letter-spacing: .15em; color: var(--text-sub); cursor: pointer; }
+    .admin-btn-cancel:hover { border-color: var(--text-sub); }
+    .admin-status { font-size: 11px; color: var(--text-hint); text-align: center;
+      margin-top: 12px; min-height: 16px; letter-spacing: .05em; }
+    .gas-setting { margin-top: 20px; padding-top: 20px; border-top: .5px solid var(--border); }
+    .gas-toggle { font-size: 10px; letter-spacing: .12em; color: var(--text-hint);
+      cursor: pointer; background: none; border: none; }
+    .gas-toggle:hover { color: var(--text-sub); }
+    .gas-fields { margin-top: 12px; display: none; }
+    .gas-fields.open { display: block; }
+    .dragging { opacity: .4; }
+    .drag-over { border-color: var(--accent) !important; }
   </style>
 </head>
 <body>
-
-<script>
-  // ★後でGASのURLに書き換えます★
-  const GAS_URL = "https://script.google.com/macros/s/AKfycbyTi4jlMQZrQolFEzo-mSShGtb2utdsIlKTD-uSagRK-8lpd4S5SJK54FBXkm8bfvcq/exec";
-</script>
+<header class="site-header">
+  <span class="logo">iliy</span>
+  <span class="logo-sub">Family Photo Studio</span>
+</header>
 
 <div class="card" id="form-card">
-  <h1>📷 商品確定フォーム</h1>
-  <p class="subtitle">撮影後のフォトパネルについて、ご希望をお聞かせください。</p>
+  <p class="form-eyebrow" id="disp-eyebrow">PHOTO PRODUCTS</p>
+  <h1 class="form-title" id="disp-title">ご注文フォーム</h1>
+  <p class="form-desc" id="disp-desc">撮影後のフォトパネルについて、<br>ご希望をお聞かせください。</p>
 
-  <!-- お名前 -->
   <div class="field">
-    <label class="field-label" for="name">ご予約時のお名前<span class="required">*</span></label>
+    <label class="field-label" for="name">お名前 <span class="required-mark">*</span></label>
     <input type="text" id="name" placeholder="山田 花子" maxlength="50">
-    <div class="error" id="err-name">お名前を入力してください</div>
+    <div class="error-msg" id="err-name">お名前をご入力ください</div>
   </div>
-
-  <!-- 撮影日 -->
   <div class="field">
-    <label class="field-label" for="shooting-date">撮影日<span class="required">*</span></label>
+    <label class="field-label" for="shooting-date">撮影日 <span class="required-mark">*</span></label>
     <input type="date" id="shooting-date">
-    <div class="error" id="err-date">撮影日を入力してください</div>
+    <div class="error-msg" id="err-date">撮影日をご選択ください</div>
   </div>
 
-  <!-- 商品選択 -->
+  <hr class="divider">
+
   <div class="field">
-    <label class="field-label">ご購入の商品<span class="required">*</span></label>
-    <div class="radio-group" id="product-group">
-      <label class="radio-item">
-        <input type="radio" name="product" value="ウッドパネル"> ウッドパネル
-      </label>
-      <label class="radio-item">
-        <input type="radio" name="product" value="ファブリックパネル"> ファブリックパネル
-      </label>
-      <label class="radio-item">
-        <input type="radio" name="product" value="ウッドフレーム"> ウッドフレーム
-      </label>
-      <label class="radio-item">
-        <input type="radio" name="product" value="マットフレーム"> マットフレーム
-      </label>
-    </div>
-    <div class="error" id="err-product">商品を選択してください</div>
+    <div class="field-label">商品をお選びください <span class="required-mark">*</span></div>
+    <div class="product-grid" id="product-grid"></div>
+    <div class="error-msg" id="err-product">商品をお選びください</div>
   </div>
 
-  <!-- 受取方法 -->
+  <hr class="divider">
+
   <div class="field">
-    <label class="field-label">お受け取り方法<span class="required">*</span></label>
+    <div class="field-label">お受け取り方法 <span class="required-mark">*</span></div>
     <div class="radio-group" id="delivery-group">
       <label class="radio-item">
-        <input type="radio" name="delivery" value="店舗受け取り"> 店舗受け取り
+        <input type="radio" name="delivery" value="店舗受け取り">
+        <span class="radio-dot"></span>店舗受け取り
       </label>
       <label class="radio-item">
-        <input type="radio" name="delivery" value="自宅配送"> 自宅配送
+        <input type="radio" name="delivery" value="自宅配送">
+        <span class="radio-dot"></span>自宅配送（配送料 ¥1,000）
       </label>
     </div>
-    <div class="error" id="err-delivery">受け取り方法を選択してください</div>
+    <div class="error-msg" id="err-delivery">お受け取り方法をお選びください</div>
   </div>
 
-  <!-- 配送先住所（自宅配送のみ表示） -->
-  <div class="field address-field" id="address-field">
-    <label class="field-label" for="address">配送先住所<span class="required">*</span></label>
-    <textarea id="address" placeholder="〒000-0000&#10;大阪府大阪市○○区..." maxlength="200"></textarea>
-    <div class="error" id="err-address">配送先住所を入力してください</div>
+  <div class="address-field" id="address-field">
+    <div class="field">
+      <label class="field-label" for="address">配送先住所 <span class="required-mark">*</span></label>
+      <textarea id="address" placeholder="〒000-0000&#10;大阪府大阪市○○区..." maxlength="200"></textarea>
+      <div class="error-msg" id="err-address">配送先住所をご入力ください</div>
+    </div>
   </div>
 
-  <button class="btn" id="submit-btn" onclick="handleSubmit()">送信する</button>
+  <div class="btn-wrap">
+    <button class="btn" id="submit-btn" onclick="handleSubmit()">送 信 す る</button>
+  </div>
 </div>
 
-<!-- 送信完了画面 -->
-<div class="card success-card" id="success-card" style="display:none;">
-  <div class="success-icon">✅</div>
-  <div class="success-title">送信完了しました</div>
-  <div class="success-msg">
-    ご回答ありがとうございます。<br>
-    商品の準備が整いましたら、<br>
-    あらためてご連絡いたします。
+<div class="success-card" id="success-card">
+  <p class="success-mark">— THANK YOU —</p>
+  <h2 class="success-title">送信が完了しました</h2>
+  <p class="success-msg">ご回答ありがとうございます。<br>商品の準備が整いましたら、<br>あらためてご連絡いたします。</p>
+</div>
+
+<footer class="site-footer">
+  <span>iliy — Family Photo Studio</span>
+  <button class="edit-trigger" onclick="openAdmin()">edit</button>
+</footer>
+
+<!-- 管理パネル -->
+<div class="admin-overlay" id="admin-overlay" onclick="overlayClick(event)">
+  <div class="admin-panel">
+    <p class="admin-title">設定</p>
+    <p class="admin-sub">フォームの文言・商品内容を変更できます</p>
+    <div class="admin-section">
+      <p class="admin-label">EYEBROW（小見出し）</p>
+      <input class="admin-input" id="cfg-eyebrow" placeholder="PHOTO PRODUCTS">
+    </div>
+    <div class="admin-section">
+      <p class="admin-label">フォームタイトル</p>
+      <input class="admin-input" id="cfg-title" placeholder="ご注文フォーム">
+    </div>
+    <div class="admin-section">
+      <p class="admin-label">説明文</p>
+      <textarea class="admin-textarea" id="cfg-desc" rows="3"></textarea>
+    </div>
+    <hr class="divider" style="margin: 20px 0;">
+    <div class="admin-section">
+      <p class="admin-label">商品リスト（ドラッグで並び替え）</p>
+      <div class="products-admin-list" id="products-admin-list"></div>
+      <button class="add-product-btn" onclick="addProductAdmin()">＋ 商品を追加</button>
+    </div>
+    <div class="admin-actions">
+      <button class="admin-btn-cancel" onclick="closeAdmin()">キャンセル</button>
+      <button class="admin-btn" onclick="saveSettings()">保 存 す る</button>
+    </div>
+    <p class="admin-status" id="admin-status"></p>
+    <div class="gas-setting">
+      <button class="gas-toggle" onclick="toggleGasFields()">⚙ GAS / セキュリティ設定</button>
+      <div class="gas-fields" id="gas-fields">
+        <div class="admin-section" style="margin-top:12px;">
+          <p class="admin-label">GAS Web API URL</p>
+          <input class="admin-input" id="cfg-gas-url" placeholder="https://script.google.com/macros/s/...">
+        </div>
+        <div class="admin-section">
+          <p class="admin-label">管理パスワード（設定すると次回から聞かれます）</p>
+          <input class="admin-input" type="password" id="cfg-password" placeholder="空欄でパスワードなし">
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
 <script>
-  document.querySelectorAll('.radio-item input[type="radio"]').forEach(radio => {
-    radio.addEventListener('change', function () {
-      const group = this.closest('.radio-group');
-      group.querySelectorAll('.radio-item').forEach(item => item.classList.remove('selected'));
-      this.closest('.radio-item').classList.add('selected');
-      if (this.name === 'delivery') toggleAddress(this.value);
+const DEFAULT_CONFIG = {
+  gasUrl: "https://script.google.com/macros/s/AKfycbyTi4jlMQZrQolFEzo-mSShGtb2utdsIlKTD-uSagRK-8lpd4S5SJK54FBXkm8bfvcq/exec",
+  password: "",
+  eyebrow: "PHOTO PRODUCTS",
+  title: "ご注文フォーム",
+  desc: "撮影後のフォトパネルについて、\nご希望をお聞かせください。",
+  products: [
+    { id: 1, name: "ウッドパネル",     price: "¥12,000〜", img: "" },
+    { id: 2, name: "ファブリックパネル", price: "¥10,000〜", img: "" },
+    { id: 3, name: "ウッドフレーム",   price: "¥8,000〜",  img: "" },
+    { id: 4, name: "マットフレーム",   price: "¥9,000〜",  img: "" }
+  ]
+};
+
+let config = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+let selectedProduct = null;
+let adminDragSrc = null;
+
+async function loadConfig() {
+  try {
+    const res = await fetch(config.gasUrl + "?action=getConfig");
+    const data = await res.json();
+    if (data && data.config) config = Object.assign({}, DEFAULT_CONFIG, data.config);
+  } catch(e) {}
+  applyConfig();
+}
+
+function applyConfig() {
+  document.getElementById('disp-eyebrow').textContent = config.eyebrow;
+  document.getElementById('disp-title').textContent   = config.title;
+  document.getElementById('disp-desc').innerHTML      = config.desc.replace(/\n/g, '<br>');
+  renderProductGrid();
+}
+
+function renderProductGrid() {
+  const grid = document.getElementById('product-grid');
+  grid.innerHTML = '';
+  (config.products || []).forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'product-card' + (selectedProduct === p.id ? ' selected' : '');
+    card.dataset.id = p.id;
+    card.onclick = () => selectProduct(p.id);
+    const imgHtml = p.img
+      ? `<img class="product-img" src="${p.img}" alt="${p.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="product-img-placeholder" style="display:none">PHOTO</div>`
+      : `<div class="product-img-placeholder">PHOTO</div>`;
+    card.innerHTML = imgHtml + `<div class="product-info"><p class="product-name">${p.name}</p><p class="product-price">${p.price}</p></div>`;
+    grid.appendChild(card);
+  });
+}
+
+function selectProduct(id) {
+  selectedProduct = id;
+  document.querySelectorAll('.product-card').forEach(c => {
+    c.classList.toggle('selected', parseInt(c.dataset.id) === id);
+  });
+  hideError('err-product');
+}
+
+document.querySelectorAll('.radio-item input[type="radio"]').forEach(radio => {
+  radio.addEventListener('change', function() {
+    this.closest('.radio-group').querySelectorAll('.radio-item').forEach(i => i.classList.remove('selected'));
+    this.closest('.radio-item').classList.add('selected');
+    if (this.name === 'delivery') toggleAddress(this.value);
+  });
+});
+
+function toggleAddress(v) {
+  const f = document.getElementById('address-field');
+  if (v === '自宅配送') { f.classList.add('show'); }
+  else { f.classList.remove('show'); document.getElementById('address').value = ''; hideError('err-address'); }
+}
+
+function validate() {
+  let ok = true;
+  const name         = document.getElementById('name').value.trim();
+  const shootingDate = document.getElementById('shooting-date').value;
+  const delivery     = document.querySelector('input[name="delivery"]:checked')?.value;
+  const address      = document.getElementById('address').value.trim();
+  if (!name)           { showError('err-name');     ok=false; } else hideError('err-name');
+  if (!shootingDate)   { showError('err-date');     ok=false; } else hideError('err-date');
+  if (!selectedProduct){ showError('err-product');  ok=false; } else hideError('err-product');
+  if (!delivery)       { showError('err-delivery'); ok=false; } else hideError('err-delivery');
+  if (delivery === '自宅配送' && !address) { showError('err-address'); ok=false; } else hideError('err-address');
+  if (!ok) return null;
+  const p = config.products.find(p => p.id === selectedProduct);
+  return { name, shootingDate, product: p ? p.name : '', delivery, address };
+}
+
+function showError(id) { document.getElementById(id).classList.add('show'); }
+function hideError(id) { document.getElementById(id).classList.remove('show'); }
+
+async function handleSubmit() {
+  const data = validate();
+  if (!data) return;
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true; btn.textContent = '送 信 中 . . .';
+  try {
+    await fetch(config.gasUrl, { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(data), mode:'no-cors' });
+    document.getElementById('form-card').style.display = 'none';
+    document.getElementById('success-card').style.display = 'block';
+  } catch(e) {
+    btn.disabled = false; btn.textContent = '送 信 す る';
+    alert('送信に失敗しました。時間をおいて再度お試しください。');
+  }
+}
+
+function openAdmin() {
+  if (config.password) {
+    const pw = prompt('パスワードを入力してください');
+    if (pw !== config.password) { alert('パスワードが違います'); return; }
+  }
+  document.getElementById('cfg-eyebrow').value  = config.eyebrow;
+  document.getElementById('cfg-title').value    = config.title;
+  document.getElementById('cfg-desc').value     = config.desc;
+  document.getElementById('cfg-gas-url').value  = config.gasUrl;
+  document.getElementById('cfg-password').value = config.password || '';
+  renderProductsAdmin();
+  document.getElementById('admin-overlay').classList.add('open');
+  document.getElementById('admin-status').textContent = '';
+}
+
+function closeAdmin() { document.getElementById('admin-overlay').classList.remove('open'); }
+function overlayClick(e) { if (e.target === document.getElementById('admin-overlay')) closeAdmin(); }
+
+function renderProductsAdmin() {
+  const list = document.getElementById('products-admin-list');
+  list.innerHTML = '';
+  (config.products || []).forEach((p, i) => {
+    const item = document.createElement('div');
+    item.className = 'product-admin-item';
+    item.draggable = true;
+    item.dataset.index = i;
+    item.innerHTML = `
+      <span class="drag-handle" title="ドラッグで並び替え">⠿</span>
+      <div class="product-admin-fields">
+        <div class="product-admin-row">
+          <div><p class="admin-field-label">商品名</p><input class="product-admin-input" data-field="name" value="${p.name}" placeholder="商品名"></div>
+          <div><p class="admin-field-label">料金</p><input class="product-admin-input" data-field="price" value="${p.price}" placeholder="¥0,000〜"></div>
+        </div>
+        <div><p class="admin-field-label" style="margin-top:6px;">画像URL</p>
+          <input class="product-admin-input" data-field="img" value="${p.img}" placeholder="https://... （空欄でプレースホルダー）" style="width:100%"></div>
+      </div>
+      <button class="product-delete-btn" onclick="deleteProductAdmin(${i})" title="削除">×</button>`;
+    item.addEventListener('dragstart', e => { adminDragSrc = i; item.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; });
+    item.addEventListener('dragend',   () => item.classList.remove('dragging'));
+    item.addEventListener('dragover',  e => { e.preventDefault(); item.classList.add('drag-over'); });
+    item.addEventListener('dragleave', () => item.classList.remove('drag-over'));
+    item.addEventListener('drop', e => {
+      e.preventDefault(); item.classList.remove('drag-over');
+      if (adminDragSrc === null || adminDragSrc === i) return;
+      collectAdminFields();
+      const moved = config.products.splice(adminDragSrc, 1)[0];
+      config.products.splice(i, 0, moved);
+      renderProductsAdmin();
+    });
+    list.appendChild(item);
+  });
+}
+
+function collectAdminFields() {
+  document.querySelectorAll('.product-admin-item').forEach((item, i) => {
+    if (!config.products[i]) return;
+    item.querySelectorAll('.product-admin-input').forEach(inp => {
+      config.products[i][inp.dataset.field] = inp.value;
     });
   });
+}
 
-  function toggleAddress(value) {
-    const field = document.getElementById('address-field');
-    if (value === '自宅配送') {
-      field.classList.add('show');
-    } else {
-      field.classList.remove('show');
-      document.getElementById('address').value = '';
-      hideError('err-address');
-    }
-  }
+function addProductAdmin() {
+  collectAdminFields();
+  config.products.push({ id: Date.now(), name:'', price:'', img:'' });
+  renderProductsAdmin();
+}
 
-  function validate() {
-    let ok = true;
-    const name = document.getElementById('name').value.trim();
-    const shootingDate = document.getElementById('shooting-date').value;
-    const product = document.querySelector('input[name="product"]:checked')?.value;
-    const delivery = document.querySelector('input[name="delivery"]:checked')?.value;
-    const address = document.getElementById('address').value.trim();
+function deleteProductAdmin(i) {
+  collectAdminFields();
+  config.products.splice(i, 1);
+  renderProductsAdmin();
+}
 
-    if (!name)         { showError('err-name');     ok = false; } else hideError('err-name');
-    if (!shootingDate) { showError('err-date');     ok = false; } else hideError('err-date');
-    if (!product)      { showError('err-product');  ok = false; } else hideError('err-product');
-    if (!delivery)     { showError('err-delivery'); ok = false; } else hideError('err-delivery');
-    if (delivery === '自宅配送' && !address) {
-      showError('err-address'); ok = false;
-    } else {
-      hideError('err-address');
-    }
+async function saveSettings() {
+  collectAdminFields();
+  config.eyebrow  = document.getElementById('cfg-eyebrow').value || DEFAULT_CONFIG.eyebrow;
+  config.title    = document.getElementById('cfg-title').value   || DEFAULT_CONFIG.title;
+  config.desc     = document.getElementById('cfg-desc').value    || DEFAULT_CONFIG.desc;
+  config.gasUrl   = document.getElementById('cfg-gas-url').value || DEFAULT_CONFIG.gasUrl;
+  config.password = document.getElementById('cfg-password').value;
+  const st = document.getElementById('admin-status');
+  st.textContent = '保存中...';
+  try {
+    await fetch(config.gasUrl, { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ action:'saveConfig', config }), mode:'no-cors' });
+    st.textContent = '保存しました';
+    applyConfig();
+    setTimeout(closeAdmin, 800);
+  } catch(e) { st.textContent = '保存に失敗しました'; }
+}
 
-    return ok ? { name, shootingDate, product, delivery, address } : null;
-  }
+function toggleGasFields() { document.getElementById('gas-fields').classList.toggle('open'); }
 
-  function showError(id) { document.getElementById(id).classList.add('show'); }
-  function hideError(id) { document.getElementById(id).classList.remove('show'); }
-
-  async function handleSubmit() {
-    const data = validate();
-    if (!data) return;
-
-    const btn = document.getElementById('submit-btn');
-    btn.disabled = true;
-    btn.textContent = '送信中...';
-
-    try {
-      await fetch(GAS_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-        mode: 'no-cors'
-      });
-      document.getElementById('form-card').style.display = 'none';
-      document.getElementById('success-card').style.display = 'block';
-    } catch (e) {
-      btn.disabled = false;
-      btn.textContent = '送信する';
-      alert('送信に失敗しました。時間をおいて再度お試しください。');
-    }
-  }
+loadConfig();
 </script>
 </body>
 </html>
