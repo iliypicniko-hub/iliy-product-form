@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>商品確定フォーム</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', sans-serif;
+      background: #f5f5f5;
+      padding: 16px;
+      color: #333;
+    }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 24px;
+      max-width: 480px;
+      margin: 0 auto;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    h1 { font-size: 18px; font-weight: bold; margin-bottom: 4px; }
+    .subtitle { font-size: 13px; color: #666; margin-bottom: 24px; line-height: 1.6; }
+    .field { margin-bottom: 20px; }
+    label.field-label {
+      display: block;
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+    .required { color: #e53e3e; margin-left: 4px; }
+    input[type="text"],
+    input[type="date"],
+    textarea {
+      width: 100%;
+      border: 1.5px solid #ddd;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s;
+      font-family: inherit;
+    }
+    input[type="text"]:focus,
+    input[type="date"]:focus,
+    textarea:focus { border-color: #4a90d9; }
+    textarea { resize: vertical; min-height: 80px; }
+    .radio-group { display: flex; flex-direction: column; gap: 10px; }
+    .radio-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border: 1.5px solid #ddd;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      font-size: 15px;
+    }
+    .radio-item:hover { border-color: #4a90d9; background: #f0f7ff; }
+    .radio-item input[type="radio"] { accent-color: #4a90d9; width: 16px; height: 16px; flex-shrink: 0; }
+    .radio-item.selected { border-color: #4a90d9; background: #f0f7ff; }
+    .error { color: #e53e3e; font-size: 13px; margin-top: 4px; display: none; }
+    .error.show { display: block; }
+    .address-field { display: none; }
+    .address-field.show { display: block; }
+    .btn {
+      width: 100%;
+      background: #4a90d9;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.2s;
+    }
+    .btn:hover:not(:disabled) { background: #357abd; }
+    .btn:disabled { background: #aaa; cursor: not-allowed; }
+    .success-card { text-align: center; padding: 40px 24px; }
+    .success-icon { font-size: 48px; margin-bottom: 16px; }
+    .success-title { font-size: 20px; font-weight: bold; margin-bottom: 12px; }
+    .success-msg { font-size: 14px; color: #666; line-height: 1.8; }
+  </style>
+</head>
+<body>
+
+<script>
+  // ★後でGASのURLに書き換えます★
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbyTi4jlMQZrQolFEzo-mSShGtb2utdsIlKTD-uSagRK-8lpd4S5SJK54FBXkm8bfvcq/exec";
+</script>
+
+<div class="card" id="form-card">
+  <h1>📷 商品確定フォーム</h1>
+  <p class="subtitle">撮影後のフォトパネルについて、ご希望をお聞かせください。</p>
+
+  <!-- お名前 -->
+  <div class="field">
+    <label class="field-label" for="name">ご予約時のお名前<span class="required">*</span></label>
+    <input type="text" id="name" placeholder="山田 花子" maxlength="50">
+    <div class="error" id="err-name">お名前を入力してください</div>
+  </div>
+
+  <!-- 撮影日 -->
+  <div class="field">
+    <label class="field-label" for="shooting-date">撮影日<span class="required">*</span></label>
+    <input type="date" id="shooting-date">
+    <div class="error" id="err-date">撮影日を入力してください</div>
+  </div>
+
+  <!-- 商品選択 -->
+  <div class="field">
+    <label class="field-label">ご購入の商品<span class="required">*</span></label>
+    <div class="radio-group" id="product-group">
+      <label class="radio-item">
+        <input type="radio" name="product" value="ウッドパネル"> ウッドパネル
+      </label>
+      <label class="radio-item">
+        <input type="radio" name="product" value="ファブリックパネル"> ファブリックパネル
+      </label>
+      <label class="radio-item">
+        <input type="radio" name="product" value="ウッドフレーム"> ウッドフレーム
+      </label>
+      <label class="radio-item">
+        <input type="radio" name="product" value="マットフレーム"> マットフレーム
+      </label>
+    </div>
+    <div class="error" id="err-product">商品を選択してください</div>
+  </div>
+
+  <!-- 受取方法 -->
+  <div class="field">
+    <label class="field-label">お受け取り方法<span class="required">*</span></label>
+    <div class="radio-group" id="delivery-group">
+      <label class="radio-item">
+        <input type="radio" name="delivery" value="店舗受け取り"> 店舗受け取り
+      </label>
+      <label class="radio-item">
+        <input type="radio" name="delivery" value="自宅配送"> 自宅配送
+      </label>
+    </div>
+    <div class="error" id="err-delivery">受け取り方法を選択してください</div>
+  </div>
+
+  <!-- 配送先住所（自宅配送のみ表示） -->
+  <div class="field address-field" id="address-field">
+    <label class="field-label" for="address">配送先住所<span class="required">*</span></label>
+    <textarea id="address" placeholder="〒000-0000&#10;大阪府大阪市○○区..." maxlength="200"></textarea>
+    <div class="error" id="err-address">配送先住所を入力してください</div>
+  </div>
+
+  <button class="btn" id="submit-btn" onclick="handleSubmit()">送信する</button>
+</div>
+
+<!-- 送信完了画面 -->
+<div class="card success-card" id="success-card" style="display:none;">
+  <div class="success-icon">✅</div>
+  <div class="success-title">送信完了しました</div>
+  <div class="success-msg">
+    ご回答ありがとうございます。<br>
+    商品の準備が整いましたら、<br>
+    あらためてご連絡いたします。
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.radio-item input[type="radio"]').forEach(radio => {
+    radio.addEventListener('change', function () {
+      const group = this.closest('.radio-group');
+      group.querySelectorAll('.radio-item').forEach(item => item.classList.remove('selected'));
+      this.closest('.radio-item').classList.add('selected');
+      if (this.name === 'delivery') toggleAddress(this.value);
+    });
+  });
+
+  function toggleAddress(value) {
+    const field = document.getElementById('address-field');
+    if (value === '自宅配送') {
+      field.classList.add('show');
+    } else {
+      field.classList.remove('show');
+      document.getElementById('address').value = '';
+      hideError('err-address');
+    }
+  }
+
+  function validate() {
+    let ok = true;
+    const name = document.getElementById('name').value.trim();
+    const shootingDate = document.getElementById('shooting-date').value;
+    const product = document.querySelector('input[name="product"]:checked')?.value;
+    const delivery = document.querySelector('input[name="delivery"]:checked')?.value;
+    const address = document.getElementById('address').value.trim();
+
+    if (!name)         { showError('err-name');     ok = false; } else hideError('err-name');
+    if (!shootingDate) { showError('err-date');     ok = false; } else hideError('err-date');
+    if (!product)      { showError('err-product');  ok = false; } else hideError('err-product');
+    if (!delivery)     { showError('err-delivery'); ok = false; } else hideError('err-delivery');
+    if (delivery === '自宅配送' && !address) {
+      showError('err-address'); ok = false;
+    } else {
+      hideError('err-address');
+    }
+
+    return ok ? { name, shootingDate, product, delivery, address } : null;
+  }
+
+  function showError(id) { document.getElementById(id).classList.add('show'); }
+  function hideError(id) { document.getElementById(id).classList.remove('show'); }
+
+  async function handleSubmit() {
+    const data = validate();
+    if (!data) return;
+
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.textContent = '送信中...';
+
+    try {
+      await fetch(GAS_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+        mode: 'no-cors'
+      });
+      document.getElementById('form-card').style.display = 'none';
+      document.getElementById('success-card').style.display = 'block';
+    } catch (e) {
+      btn.disabled = false;
+      btn.textContent = '送信する';
+      alert('送信に失敗しました。時間をおいて再度お試しください。');
+    }
+  }
+</script>
+</body>
+</html>
