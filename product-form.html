@@ -234,9 +234,23 @@
   </div>
   <div class="address-field" id="address-field">
     <div class="field">
-      <label class="field-label" for="address">配送先住所 <span class="required-mark">*</span></label>
-      <textarea id="address" placeholder="〒000-0000&#10;大阪府大阪市○○区..." maxlength="200"></textarea>
-      <div class="error-msg" id="err-address">配送先住所をご入力ください</div>
+      <label class="field-label" for="postal-code">郵便番号 <span class="required-mark">*</span></label>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <input type="text" id="postal-code" placeholder="1234567" maxlength="8" style="max-width:140px;"
+          oninput="onPostalInput(this)" inputmode="numeric">
+        <span id="postal-status" style="font-size:11px;color:var(--text-hint);letter-spacing:.05em;"></span>
+      </div>
+      <div class="error-msg" id="err-postal">郵便番号をご入力ください</div>
+    </div>
+    <div class="field">
+      <label class="field-label" for="address-pref">都道府県・市区町村 <span class="required-mark">*</span></label>
+      <input type="text" id="address-pref" placeholder="大阪府大阪市北区" maxlength="100">
+      <div class="error-msg" id="err-pref">都道府県・市区町村をご入力ください</div>
+    </div>
+    <div class="field">
+      <label class="field-label" for="address-detail">番地・建物名・部屋番号 <span class="required-mark">*</span></label>
+      <input type="text" id="address-detail" placeholder="梅田1-2-3 ○○マンション101" maxlength="100">
+      <div class="error-msg" id="err-detail">番地・建物名をご入力ください</div>
     </div>
   </div>
   <div class="btn-wrap">
@@ -780,6 +794,38 @@ async function uploadToGitHub(file,i){
   }catch(err){statusEl.textContent='✗ 失敗: '+(err.message||'エラー');}
 }
 function fileToBase64(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=()=>rej(new Error('読み込み失敗'));r.readAsDataURL(file);});}
+
+// ===== 郵便番号自動入力 =====
+function onPostalInput(el) {
+  // ハイフン自動除去・数字のみ
+  let val = el.value.replace(/[^0-9]/g, '');
+  el.value = val;
+  if (val.length === 7) lookupPostal(val);
+}
+
+async function lookupPostal(code) {
+  const statusEl = document.getElementById('postal-status');
+  statusEl.textContent = '検索中...';
+  try {
+    const res  = await fetch(`https://zipcloud.ibsnet.co.jp/api/search?zipcode=${code}`);
+    const data = await res.json();
+    if (data.results && data.results.length > 0) {
+      const r = data.results[0];
+      const addr = r.address1 + r.address2 + r.address3;
+      document.getElementById('address-pref').value = addr;
+      statusEl.textContent = '✓ 住所を自動入力しました';
+      hideError('err-postal');
+      hideError('err-pref');
+      // 番地欄にフォーカス
+      document.getElementById('address-detail').focus();
+    } else {
+      statusEl.textContent = '住所が見つかりませんでした';
+      document.getElementById('address-pref').value = '';
+    }
+  } catch(e) {
+    statusEl.textContent = '通信エラー';
+  }
+}
 
 loadConfig();
 </script>
