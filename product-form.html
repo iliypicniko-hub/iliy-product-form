@@ -396,10 +396,14 @@ function renderProductGrid() {
     const optionGroups = p.optionGroups || [];
     const hasOptions = optionGroups.length > 0;
 
-    // 選択済みオプション表示
+    // 選択済みオプション表示（料金付き）
     let optBadge = '';
     if (inCart && Object.keys(opts).length > 0) {
-      optBadge = Object.entries(opts).map(([k,v]) => `${k}：${v}`).join(' / ');
+      optBadge = Object.entries(opts).map(([k,raw]) => {
+        const parts = raw.split('/').map(s=>s.trim());
+        const valName = parts[0]; const valPrice = parts[1]||'';
+        return `${k}：${valName}${valPrice?' '+valPrice:''}`;
+      }).join(' / ');
     }
 
     const card = document.createElement('div');
@@ -476,7 +480,11 @@ function renderCartSummary() {
   items.forEach(([id, v]) => {
     const p = config.products.find(p => p.id == id);
     if (!p) return;
-    const optStr = Object.entries(v.options||{}).map(([k,val])=>`${k}：${val}`).join(' / ');
+    const optStr = Object.entries(v.options||{}).map(([k,raw])=>{
+      const parts=raw.split('/').map(s=>s.trim());
+      const n=parts[0];const pr=parts[1]||'';
+      return `${k}：${n}${pr?' '+pr:''}`;
+    }).join(' / ');
     html += `<div class="cart-item-row">
       <div><p class="cart-item-name">${p.name}</p>${optStr?`<p class="cart-item-option">${optStr}</p>`:''}</div>
       <span class="cart-item-qty">× ${v.qty}</span>
@@ -502,12 +510,24 @@ function openOptionModal(productId) {
     div.className = 'option-group';
     div.innerHTML = `<p class="option-group-label">${group.name}</p><div class="option-chips" data-group="${group.name}"></div>`;
     const chipsWrap = div.querySelector('.option-chips');
-    (group.values||[]).forEach(val => {
+    (group.values||[]).forEach(rawVal => {
+      // "S / ¥8,000" → name="S", price="¥8,000"
+      const parts = rawVal.split('/').map(s => s.trim());
+      const valName  = parts[0] || rawVal.trim();
+      const valPrice = parts[1] || '';
+      const currentSel = optionTempSelections[group.name];
+      const isSelected = currentSel === rawVal.trim() || currentSel === valName;
+
       const btn = document.createElement('button');
-      btn.className = 'option-chip' + (optionTempSelections[group.name]===val?' selected':'');
-      btn.textContent = val;
+      btn.className = 'option-chip' + (isSelected ? ' selected' : '');
+      btn.dataset.val   = rawVal.trim();
+      btn.dataset.name  = valName;
+      btn.dataset.price = valPrice;
+      btn.innerHTML = valPrice
+        ? `<span>${valName}</span><span style="font-size:10px;color:var(--text-hint);margin-left:6px;">${valPrice}</span>`
+        : `<span>${valName}</span>`;
       btn.onclick = () => {
-        optionTempSelections[group.name] = val;
+        optionTempSelections[group.name] = rawVal.trim();
         chipsWrap.querySelectorAll('.option-chip').forEach(c => c.classList.remove('selected'));
         btn.classList.add('selected');
       };
@@ -550,11 +570,22 @@ function toggleAddress(v){
 }
 
 // ===== 送信 =====
+function parseOptionVal(raw) {
+  // "S / ¥8,000" → { name:"S", price:"¥8,000", display:"S (¥8,000)" }
+  const parts = raw.split('/').map(s => s.trim());
+  const name  = parts[0] || raw;
+  const price = parts[1] || '';
+  return { name, price, display: price ? `${name} (${price})` : name };
+}
+
 function buildCartText() {
   return Object.entries(cart).filter(([,v])=>v.qty>0).map(([id,v])=>{
     const p=config.products.find(p=>p.id==id);
     const name=p?p.name:id;
-    const opts=Object.entries(v.options||{}).map(([k,val])=>`${k}:${val}`).join(' ');
+    const opts=Object.entries(v.options||{}).map(([k,raw])=>{
+      const parsed=parseOptionVal(raw);
+      return `${k}:${parsed.display}`;
+    }).join(' ');
     return `${name}${opts?' ('+opts+')':''} ×${v.qty}`;
   }).join(' / ');
 }
@@ -648,8 +679,8 @@ function renderProductsAdmin(){
           <input class="option-group-name-input" placeholder="グループ名（例：サイズ）" value="${g.name}" data-gi="${gi}" data-field="name">
           <button class="option-group-del" onclick="deleteOptionGroup(${i},${gi})">×</button>
         </div>
-        <input class="option-values-input" placeholder="選択肢をカンマ区切りで入力" value="${(g.values||[]).join(', ')}" data-gi="${gi}" data-field="values">
-        <p class="option-values-hint">例：S, M, L, XL</p>
+        <input class="option-values-input" placeholder="S / ¥8,000, M / ¥10,000, L / ¥12,000" value="${(g.values||[]).join(', ')}" data-gi="${gi}" data-field="values">
+        <p class="option-values-hint">例：S / ¥8,000, M / ¥10,000, L / ¥12,000　（料金なしの場合は名前だけでもOK）</p>
       </div>`).join('');
 
     item.innerHTML=`
