@@ -165,6 +165,18 @@
     .admin-btn:hover { background: var(--accent); color: #fff; }
     .admin-btn-cancel { flex: 1; padding: 14px; border: .5px solid var(--border); background: none; font-size: 11px; letter-spacing: .15em; color: var(--text-sub); cursor: pointer; font-family: 'Noto Sans JP', sans-serif; }
     .admin-status { font-size: 11px; color: var(--text-hint); text-align: center; margin-top: 12px; min-height: 16px; }
+    /* オプションテーブル入力 */
+    .option-table { width: 100%; border-collapse: collapse; margin-top: 6px; }
+    .option-table th { font-size: 9px; letter-spacing: .12em; color: var(--text-hint); font-weight: 400; padding: 4px 8px 6px; text-align: left; border-bottom: .5px solid var(--border); }
+    .option-table td { padding: 5px 4px; border-bottom: .5px solid var(--border); vertical-align: middle; }
+    .option-table td:last-child { width: 28px; text-align: center; }
+    .option-table-input { width: 100%; border: none; border-bottom: .5px solid var(--border); padding: 4px 4px; font-size: 12px; font-family: 'Noto Sans JP', sans-serif; font-weight: 300; color: var(--text-main); background: transparent; outline: none; }
+    .option-table-input:focus { border-color: var(--border-focus); }
+    .option-table-del { background: none; border: none; cursor: pointer; font-size: 14px; color: var(--text-hint); padding: 0; line-height: 1; }
+    .option-table-del:hover { color: var(--error); }
+    .add-option-row-btn { font-size: 10px; letter-spacing: .1em; color: var(--text-sub); background: none; border: .5px dashed var(--border); padding: 5px 12px; cursor: pointer; margin-top: 6px; width: 100%; }
+    .add-option-row-btn:hover { border-color: var(--accent); color: var(--accent); }
+
     .dragging { opacity: .4; }
     .drag-over-item { border-color: var(--accent) !important; }
 
@@ -802,16 +814,30 @@ function renderProductsAdmin(){
     const item=document.createElement('div');
     item.className='product-admin-item';item.draggable=true;item.dataset.index=i;
 
-    // オプショングループHTML生成
-    let optGroupsHtml=optGroups.map((g,gi)=>`
-      <div class="option-group-admin" data-gi="${gi}">
+    // オプショングループHTML生成（テーブル形式）
+    let optGroupsHtml = optGroups.map((g, gi) => {
+      const rows = (g.values||[]).map((rawVal, ri) => {
+        const parts    = rawVal.split('/').map(s => s.trim());
+        const valName  = parts[0] || '';
+        const valPrice = parts[1] || '';
+        return `<tr>
+          <td><input class="option-table-input opt-val-name" data-gi="${gi}" data-ri="${ri}" placeholder="例：M" value="${valName}"></td>
+          <td><input class="option-table-input opt-val-price" data-gi="${gi}" data-ri="${ri}" placeholder="例：¥10,000" value="${valPrice}"></td>
+          <td><button class="option-table-del" onclick="deleteOptionRow(${i},${gi},${ri})">×</button></td>
+        </tr>`;
+      }).join('');
+      return `<div class="option-group-admin" data-gi="${gi}">
         <div class="option-group-admin-header">
           <input class="option-group-name-input" placeholder="グループ名（例：サイズ）" value="${g.name}" data-gi="${gi}" data-field="name">
           <button class="option-group-del" onclick="deleteOptionGroup(${i},${gi})">×</button>
         </div>
-        <input class="option-values-input" placeholder="S / ¥8,000, M / ¥10,000, L / ¥12,000" value="${(g.values||[]).join(', ')}" data-gi="${gi}" data-field="values">
-        <p class="option-values-hint">例：S / ¥8,000, M / ¥10,000, L / ¥12,000　（料金なしの場合は名前だけでもOK）</p>
-      </div>`).join('');
+        <table class="option-table">
+          <thead><tr><th>サイズ・仕様名</th><th>料金</th><th></th></tr></thead>
+          <tbody id="opt-rows-${i}-${gi}">${rows}</tbody>
+        </table>
+        <button class="add-option-row-btn" onclick="addOptionRow(${i},${gi})">＋ 行を追加</button>
+      </div>`;
+    }).join('');
 
     item.innerHTML=`
       <span class="drag-handle">⠿</span>
@@ -865,9 +891,23 @@ function renderProductsAdmin(){
 function addOptionGroup(productIndex){
   collectAdminFields();
   if(!config.products[productIndex].optionGroups) config.products[productIndex].optionGroups=[];
-  config.products[productIndex].optionGroups.push({name:'',values:[]});
+  config.products[productIndex].optionGroups.push({name:'',values:['']});
   renderProductsAdmin();
   switchTab('products', document.querySelector('.admin-tab:nth-child(2)'));
+}
+
+function addOptionRow(productIndex, groupIndex){
+  collectAdminFields();
+  if(!config.products[productIndex].optionGroups[groupIndex].values)
+    config.products[productIndex].optionGroups[groupIndex].values=[];
+  config.products[productIndex].optionGroups[groupIndex].values.push('');
+  renderProductsAdmin();
+}
+
+function deleteOptionRow(productIndex, groupIndex, rowIndex){
+  collectAdminFields();
+  config.products[productIndex].optionGroups[groupIndex].values.splice(rowIndex,1);
+  renderProductsAdmin();
 }
 
 function deleteOptionGroup(productIndex,groupIndex){
@@ -880,13 +920,21 @@ function collectAdminFields(){
   document.querySelectorAll('.product-admin-item').forEach((item,i)=>{
     if(!config.products[i])return;
     item.querySelectorAll('.product-admin-input').forEach(inp=>{if(inp.dataset.field)config.products[i][inp.dataset.field]=inp.value;});
-    // オプショングループ収集
+    // オプショングループ収集（テーブル形式）
     const groups=[];
     item.querySelectorAll('.option-group-admin').forEach(gEl=>{
       const nameEl=gEl.querySelector('[data-field="name"]');
-      const valEl=gEl.querySelector('[data-field="values"]');
       const name=nameEl?nameEl.value.trim():'';
-      const vals=valEl?valEl.value.split(',').map(v=>v.trim()).filter(Boolean):[];
+      const vals=[];
+      const tbody=gEl.querySelector('tbody');
+      if(tbody){
+        tbody.querySelectorAll('tr').forEach(tr=>{
+          const n=(tr.querySelector('.opt-val-name')||{}).value||'';
+          const p=(tr.querySelector('.opt-val-price')||{}).value||'';
+          const trimN=n.trim(); const trimP=p.trim();
+          if(trimN) vals.push(trimP ? `${trimN} / ${trimP}` : trimN);
+        });
+      }
       if(name) groups.push({name,values:vals});
     });
     config.products[i].optionGroups=groups;
