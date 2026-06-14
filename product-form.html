@@ -187,6 +187,43 @@
     .crop-btn:hover { background: var(--accent); color: #fff; }
     .crop-btn-cancel { flex: 1; padding: 13px; border: .5px solid var(--border); background: none; font-size: 11px; letter-spacing: .15em; color: var(--text-sub); cursor: pointer; font-family: 'Noto Sans JP', sans-serif; }
     .crop-status { font-size: 11px; color: var(--accent); text-align: center; margin-top: 10px; min-height: 16px; }
+
+    /* ===== 商品選択ポップアップ ===== */
+    .product-popup-overlay { display: none; position: fixed; inset: 0; background: rgba(90,82,72,.5); z-index: 160; align-items: center; justify-content: center; padding: 24px; }
+    .product-popup-overlay.open { display: flex; }
+    .product-popup { background: var(--surface); border: .5px solid var(--border); width: 100%; max-width: 420px; overflow: hidden; }
+    .product-popup-img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; background: #EDE9E4; }
+    .product-popup-img-placeholder { width: 100%; aspect-ratio: 4/3; background: #EDE9E4; display: flex; align-items: center; justify-content: center; font-size: 10px; letter-spacing: .15em; color: var(--text-hint); }
+    .product-popup-body { padding: 20px 24px 24px; }
+    .product-popup-name { font-family: 'Noto Serif JP', serif; font-weight: 300; font-size: 16px; letter-spacing: .08em; color: var(--text-main); margin-bottom: 4px; }
+    .product-popup-price { font-size: 12px; color: var(--text-hint); letter-spacing: .05em; margin-bottom: 20px; min-height: 18px; }
+    .product-popup-group { margin-bottom: 16px; }
+    .product-popup-group-label { font-size: 10px; letter-spacing: .15em; color: var(--text-sub); margin-bottom: 8px; }
+    .product-popup-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .product-popup-chip { padding: 8px 16px; border: .5px solid var(--border); font-size: 12px; color: var(--text-sub); cursor: pointer; background: none; font-family: 'Noto Sans JP', sans-serif; transition: border-color .15s, background .15s, color .15s; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+    .product-popup-chip:hover { border-color: var(--border-focus); }
+    .product-popup-chip.selected { border-color: var(--accent); background: var(--selected-bg); color: var(--accent); }
+    .product-popup-chip-price { font-size: 10px; color: var(--text-hint); }
+    .product-popup-chip.selected .product-popup-chip-price { color: var(--accent); }
+    .product-popup-qty-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; margin-top: 4px; }
+    .product-popup-qty-label { font-size: 10px; letter-spacing: .15em; color: var(--text-sub); }
+    .product-popup-qty-ctrl { display: flex; align-items: center; gap: 14px; }
+    .product-popup-qty-btn { width: 32px; height: 32px; border: .5px solid var(--border); background: none; cursor: pointer; font-size: 18px; color: var(--text-sub); border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: border-color .15s, color .15s; line-height: 1; }
+    .product-popup-qty-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .product-popup-qty-btn:disabled { opacity: .3; cursor: default; }
+    .product-popup-qty-num { font-size: 18px; color: var(--text-main); font-weight: 300; min-width: 24px; text-align: center; }
+    .product-popup-actions { display: flex; gap: 10px; }
+    .product-popup-add-btn { flex: 1; padding: 14px; border: .5px solid var(--accent); background: none; font-size: 11px; letter-spacing: .2em; color: var(--accent); cursor: pointer; font-family: 'Noto Sans JP', sans-serif; transition: background .2s, color .2s; }
+    .product-popup-add-btn:hover { background: var(--accent); color: #fff; }
+    .product-popup-cancel-btn { padding: 14px 20px; border: .5px solid var(--border); background: none; font-size: 11px; letter-spacing: .1em; color: var(--text-sub); cursor: pointer; font-family: 'Noto Sans JP', sans-serif; }
+    .product-popup-error { font-size: 11px; color: var(--error); margin-bottom: 10px; min-height: 16px; }
+
+    /* カードをシンプルに */
+    .product-card { border: .5px solid var(--border); overflow: hidden; position: relative; transition: border-color .15s; cursor: pointer; }
+    .product-card:hover { border-color: var(--border-focus); }
+    .product-card.in-cart { border-color: var(--accent); }
+    .product-card-badge { position: absolute; top: 8px; right: 8px; background: var(--accent); color: #fff; font-size: 10px; letter-spacing: .05em; padding: 3px 8px; display: none; }
+    .product-card.in-cart .product-card-badge { display: block; }
   </style>
 </head>
 <body>
@@ -266,6 +303,31 @@
 
 <footer class="site-footer">iliy — Family Photo Studio</footer>
 <button class="edit-fab" onclick="openAdmin()">edit</button>
+
+<!-- 商品選択ポップアップ -->
+<div class="product-popup-overlay" id="product-popup-overlay" onclick="popupOverlayClick(event)">
+  <div class="product-popup" id="product-popup">
+    <div id="product-popup-img-wrap"></div>
+    <div class="product-popup-body">
+      <p class="product-popup-name" id="product-popup-name"></p>
+      <p class="product-popup-price" id="product-popup-price"></p>
+      <div id="product-popup-groups"></div>
+      <div class="product-popup-qty-row">
+        <span class="product-popup-qty-label">個 数</span>
+        <div class="product-popup-qty-ctrl">
+          <button class="product-popup-qty-btn" id="popup-qty-minus" onclick="popupChangeQty(-1)">−</button>
+          <span class="product-popup-qty-num" id="popup-qty-num">1</span>
+          <button class="product-popup-qty-btn" onclick="popupChangeQty(1)">＋</button>
+        </div>
+      </div>
+      <p class="product-popup-error" id="product-popup-error"></p>
+      <div class="product-popup-actions">
+        <button class="product-popup-cancel-btn" onclick="closeProductPopup()">キャンセル</button>
+        <button class="product-popup-add-btn" onclick="confirmProductPopup()">カートに追加</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- オプション選択モーダル -->
 <div class="option-overlay" id="option-overlay" onclick="optionOverlayClick(event)">
@@ -392,80 +454,148 @@ function renderProductGrid() {
   (config.products||[]).forEach(p => {
     const inCart = cart[p.id] && cart[p.id].qty > 0;
     const qty    = inCart ? cart[p.id].qty : 0;
-    const opts   = inCart ? cart[p.id].options : {};
-    const optionGroups = p.optionGroups || [];
-    const hasOptions = optionGroups.length > 0;
-
-    // 選択済みオプション表示（料金付き）
-    let optBadge = '';
-    if (inCart && Object.keys(opts).length > 0) {
-      optBadge = Object.entries(opts).map(([k,raw]) => {
-        const parts = raw.split('/').map(s=>s.trim());
-        const valName = parts[0]; const valPrice = parts[1]||'';
-        return `${k}：${valName}${valPrice?' '+valPrice:''}`;
-      }).join(' / ');
-    }
 
     const card = document.createElement('div');
     card.className = 'product-card' + (inCart ? ' in-cart' : '');
     card.dataset.id = p.id;
+    card.onclick = () => openProductPopup(p.id);
 
     const imgHtml = p.img
-      ? `<img class="product-img" src="${p.img}" alt="${p.name}" onerror="this.parentNode.innerHTML='<div class=product-img-placeholder>PHOTO</div>'">`
-      : `<div class="product-img-placeholder">PHOTO</div>`;
+      ? `<div class="product-img-wrap"><img class="product-img" src="${p.img}" alt="${p.name}" onerror="this.parentNode.innerHTML='<div class=product-img-placeholder>PHOTO</div>'"></div>`
+      : `<div class="product-img-wrap"><div class="product-img-placeholder">PHOTO</div></div>`;
 
-    const optBtnLabel = hasOptions ? (inCart && Object.keys(opts).length>0 ? '変更' : '仕様を選ぶ') : '';
-    const optBtnClass = (inCart && Object.keys(opts).length>0) ? 'cart-select-btn has-option' : 'cart-select-btn';
+    // カート内容バッジ
+    let badgeText = '';
+    if (inCart) {
+      const opts = cart[p.id].options || {};
+      const optStr = Object.entries(opts).map(([,raw]) => {
+        return raw.split('/')[0].trim();
+      }).join(' ');
+      badgeText = `${optStr ? optStr+' ' : ''}×${qty}`;
+    }
 
-    card.innerHTML = `
-      <div class="product-img-wrap" onclick="imgClick(${p.id})">${imgHtml}</div>
-      <div class="product-info" onclick="imgClick(${p.id})">
+    card.innerHTML = imgHtml + `
+      <div class="product-card-badge">${badgeText}</div>
+      <div class="product-info">
         <p class="product-name">${p.name}</p>
         <p class="product-price">${p.price}</p>
-        ${optBadge ? `<p class="product-option-badge">${optBadge}</p>` : `<p class="product-option-badge"></p>`}
-      </div>
-      <div class="product-cart-row">
-        <div class="cart-qty-ctrl">
-          <button class="qty-btn" onclick="changeQty(${p.id},-1)" ${qty===0?'disabled':''}>−</button>
-          <span class="qty-num">${qty}</span>
-          <button class="qty-btn" onclick="changeQty(${p.id},1)">＋</button>
-        </div>
-        ${hasOptions ? `<button class="${optBtnClass}" onclick="openOptionModal(${p.id})">${optBtnLabel}</button>` : ''}
       </div>`;
     grid.appendChild(card);
   });
   renderCartSummary();
 }
 
-function imgClick(productId) {
+// ===== 商品ポップアップ =====
+let popupProductId = null;
+let popupQty = 1;
+let popupSelections = {};
+
+function openProductPopup(productId) {
   const p = config.products.find(p => p.id === productId);
   if (!p) return;
-  if (p.optionGroups && p.optionGroups.length > 0) {
-    openOptionModal(productId);
-  } else {
-    changeQty(productId, 1);
+  popupProductId = productId;
+
+  // 既存カート値を引き継ぎ
+  const existing = cart[productId];
+  popupQty = existing ? existing.qty : 1;
+  popupSelections = existing ? Object.assign({}, existing.options) : {};
+
+  // 画像
+  const imgWrap = document.getElementById('product-popup-img-wrap');
+  imgWrap.innerHTML = p.img
+    ? `<img class="product-popup-img" src="${p.img}" alt="${p.name}" onerror="this.style.display='none'">`
+    : `<div class="product-popup-img-placeholder">PHOTO</div>`;
+
+  document.getElementById('product-popup-name').textContent = p.name;
+  updatePopupPrice();
+
+  // オプショングループ描画
+  const groupsEl = document.getElementById('product-popup-groups');
+  groupsEl.innerHTML = '';
+  (p.optionGroups||[]).forEach(group => {
+    const div = document.createElement('div');
+    div.className = 'product-popup-group';
+    div.innerHTML = `<p class="product-popup-group-label">${group.name}</p><div class="product-popup-chips" data-group="${group.name}"></div>`;
+    const chipsWrap = div.querySelector('.product-popup-chips');
+    (group.values||[]).forEach(rawVal => {
+      const parts    = rawVal.split('/').map(s=>s.trim());
+      const valName  = parts[0];
+      const valPrice = parts[1] || '';
+      const isSelected = popupSelections[group.name] === rawVal.trim();
+      const btn = document.createElement('button');
+      btn.className = 'product-popup-chip' + (isSelected ? ' selected' : '');
+      btn.dataset.val = rawVal.trim();
+      btn.innerHTML = `<span>${valName}</span>${valPrice ? `<span class="product-popup-chip-price">${valPrice}</span>` : ''}`;
+      btn.onclick = () => {
+        popupSelections[group.name] = rawVal.trim();
+        chipsWrap.querySelectorAll('.product-popup-chip').forEach(c => c.classList.remove('selected'));
+        btn.classList.add('selected');
+        updatePopupPrice();
+        document.getElementById('product-popup-error').textContent = '';
+      };
+      chipsWrap.appendChild(btn);
+    });
+    groupsEl.appendChild(div);
+  });
+
+  // 個数
+  document.getElementById('popup-qty-num').textContent = popupQty;
+  document.getElementById('popup-qty-minus').disabled = (popupQty <= 1);
+  document.getElementById('product-popup-error').textContent = '';
+
+  document.getElementById('product-popup-overlay').classList.add('open');
+}
+
+function updatePopupPrice() {
+  const p = config.products.find(p => p.id === popupProductId);
+  if (!p) return;
+  // 選択済みオプションから料金を取得
+  let priceStr = p.price;
+  const opts = Object.values(popupSelections);
+  if (opts.length > 0) {
+    const prices = opts.map(raw => {
+      const parts = raw.split('/').map(s=>s.trim());
+      return parts[1] || '';
+    }).filter(Boolean);
+    if (prices.length > 0) priceStr = prices.join(' + ');
   }
+  document.getElementById('product-popup-price').textContent = priceStr;
+}
+
+function popupChangeQty(delta) {
+  popupQty = Math.max(1, popupQty + delta);
+  document.getElementById('popup-qty-num').textContent = popupQty;
+  document.getElementById('popup-qty-minus').disabled = (popupQty <= 1);
+}
+
+function closeProductPopup() {
+  document.getElementById('product-popup-overlay').classList.remove('open');
+}
+
+function popupOverlayClick(e) {
+  if (e.target === document.getElementById('product-popup-overlay')) closeProductPopup();
+}
+
+function confirmProductPopup() {
+  const p = config.products.find(p => p.id === popupProductId);
+  if (!p) return;
+
+  // 必須オプションチェック
+  const required = (p.optionGroups||[]).map(g => g.name);
+  const missing  = required.filter(name => !popupSelections[name]);
+  if (missing.length > 0) {
+    document.getElementById('product-popup-error').textContent = `「${missing[0]}」を選択してください`;
+    return;
+  }
+
+  cart[popupProductId] = { qty: popupQty, options: Object.assign({}, popupSelections) };
+  hideError('err-product');
+  closeProductPopup();
+  renderProductGrid();
 }
 
 function changeQty(productId, delta) {
-  if (!cart[productId]) cart[productId] = { qty:0, options:{} };
-  const newQty = Math.max(0, cart[productId].qty + delta);
-  cart[productId].qty = newQty;
-  if (cart[productId].qty === 0) delete cart[productId];
-  hideError('err-product');
-
-  // グリッド全体を作り直さず該当カードのみ更新
-  const card = document.querySelector(`.product-card[data-id="${productId}"]`);
-  if (card) {
-    const inCart = cart[productId] && cart[productId].qty > 0;
-    const qty    = inCart ? cart[productId].qty : 0;
-    card.classList.toggle('in-cart', inCart);
-    const qtyNum  = card.querySelector('.qty-num');
-    const minusBtn = card.querySelector('.qty-btn');
-    if (qtyNum)   qtyNum.textContent = qty;
-    if (minusBtn) minusBtn.disabled = (qty === 0);
-  }
-  renderCartSummary();
+  // 後方互換用（現在は未使用）
 }
 
 function renderCartSummary() {
