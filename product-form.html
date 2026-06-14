@@ -445,10 +445,23 @@ function imgClick(productId) {
 
 function changeQty(productId, delta) {
   if (!cart[productId]) cart[productId] = { qty:0, options:{} };
-  cart[productId].qty = Math.max(0, cart[productId].qty + delta);
-  if (cart[productId].qty === 0) { delete cart[productId]; }
+  const newQty = Math.max(0, cart[productId].qty + delta);
+  cart[productId].qty = newQty;
+  if (cart[productId].qty === 0) delete cart[productId];
   hideError('err-product');
-  renderProductGrid();
+
+  // グリッド全体を作り直さず該当カードのみ更新
+  const card = document.querySelector(`.product-card[data-id="${productId}"]`);
+  if (card) {
+    const inCart = cart[productId] && cart[productId].qty > 0;
+    const qty    = inCart ? cart[productId].qty : 0;
+    card.classList.toggle('in-cart', inCart);
+    const qtyNum  = card.querySelector('.qty-num');
+    const minusBtn = card.querySelector('.qty-btn');
+    if (qtyNum)   qtyNum.textContent = qty;
+    if (minusBtn) minusBtn.disabled = (qty === 0);
+  }
+  renderCartSummary();
 }
 
 function renderCartSummary() {
