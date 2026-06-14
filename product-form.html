@@ -25,7 +25,7 @@
     .divider { border: none; border-top: .5px solid var(--border); margin: 32px 0; }
     .field { margin-bottom: 28px; }
     .field-label { display: flex; align-items: center; gap: 6px; font-size: 11px; letter-spacing: .12em; color: var(--text-sub); margin-bottom: 10px; }
-    .required-mark { font-size: 10px; color: var(--error); letter-spacing: 0; }
+    .required-mark { font-size: 10px; color: var(--error); }
     input[type="text"], input[type="date"], textarea {
       width: 100%; border: none; border-bottom: .5px solid var(--border); padding: 10px 0; font-size: 14px;
       font-family: 'Noto Sans JP', sans-serif; font-weight: 300; color: var(--text-main);
@@ -33,24 +33,13 @@
     input:focus, textarea:focus { border-color: var(--border-focus); }
     input::placeholder, textarea::placeholder { color: var(--text-hint); font-size: 12px; }
     textarea { resize: none; min-height: 72px; }
-    .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .product-card { border: .5px solid var(--border); cursor: pointer; transition: border-color .2s; overflow: hidden; position: relative; }
-    .product-card:hover { border-color: var(--border-focus); }
-    .product-card.selected { border-color: var(--accent); }
-    .product-card.selected::after { content: '✓'; position: absolute; top: 8px; right: 10px; font-size: 11px; color: var(--accent); }
-    .product-img-wrap { width: 100%; aspect-ratio: 4/3; overflow: hidden; position: relative; background: #EDE9E4; }
-    .product-img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .product-img-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 9px; letter-spacing: .15em; color: var(--text-hint); }
-    .product-info { padding: 12px 14px 14px; }
-    .product-name { font-size: 12px; letter-spacing: .08em; color: var(--text-main); font-weight: 400; margin-bottom: 4px; }
-    .product-price { font-size: 11px; color: var(--text-hint); letter-spacing: .05em; font-weight: 300; }
     .error-msg { font-size: 11px; color: var(--error); margin-top: 6px; letter-spacing: .05em; display: none; }
     .error-msg.show { display: block; }
     .radio-group { display: flex; flex-direction: column; gap: 8px; }
     .radio-item { display: flex; align-items: center; gap: 12px; padding: 13px 16px; border: .5px solid var(--border); cursor: pointer; transition: border-color .2s, background .2s; font-size: 13px; letter-spacing: .05em; color: var(--text-main); font-weight: 300; }
     .radio-item:hover { border-color: var(--border-focus); background: var(--selected-bg); }
     .radio-item.selected { border-color: var(--accent); background: var(--selected-bg); }
-    .radio-dot { width: 14px; height: 14px; border: .5px solid var(--border); border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: border-color .2s; }
+    .radio-dot { width: 14px; height: 14px; border: .5px solid var(--border); border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
     .radio-item.selected .radio-dot { border-color: var(--accent); }
     .radio-dot::after { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); opacity: 0; transition: opacity .2s; }
     .radio-item.selected .radio-dot::after { opacity: 1; }
@@ -66,19 +55,67 @@
     .success-title { font-family: 'Noto Serif JP', serif; font-weight: 300; font-size: 20px; color: var(--text-main); margin-bottom: 20px; letter-spacing: .05em; }
     .success-msg { font-size: 12px; color: var(--text-sub); line-height: 2.2; letter-spacing: .05em; }
     .site-footer { margin-top: 48px; font-size: 10px; letter-spacing: .15em; color: var(--text-hint); }
-
-    /* 右下固定editボタン */
     .edit-fab { position: fixed; bottom: 24px; right: 24px; z-index: 50; background: rgba(125,101,88,.12); border: .5px solid rgba(125,101,88,.25); color: rgba(125,101,88,.45); padding: 10px 16px; font-size: 10px; letter-spacing: .2em; cursor: pointer; transition: background .2s, color .2s, border-color .2s; font-family: 'Noto Sans JP', sans-serif; font-weight: 300; }
     .edit-fab:hover { background: rgba(125,101,88,.22); color: var(--accent); border-color: rgba(125,101,88,.5); }
 
-    /* 管理パネル */
+    /* ===== 商品グリッド ===== */
+    .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .product-card { border: .5px solid var(--border); overflow: hidden; position: relative; transition: border-color .2s; }
+    .product-card.in-cart { border-color: var(--accent); }
+    .product-img-wrap { width: 100%; aspect-ratio: 4/3; overflow: hidden; background: #EDE9E4; cursor: pointer; }
+    .product-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .product-img-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 9px; letter-spacing: .15em; color: var(--text-hint); }
+    .product-info { padding: 10px 14px 6px; cursor: pointer; }
+    .product-name { font-size: 12px; letter-spacing: .08em; color: var(--text-main); font-weight: 400; margin-bottom: 2px; }
+    .product-price { font-size: 11px; color: var(--text-hint); letter-spacing: .05em; font-weight: 300; }
+
+    /* 選択済みオプション表示 */
+    .product-option-badge { font-size: 10px; color: var(--accent); letter-spacing: .05em; margin-top: 3px; min-height: 14px; }
+
+    /* カート操作エリア */
+    .product-cart-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 14px 10px; border-top: .5px solid var(--border); }
+    .cart-qty-ctrl { display: flex; align-items: center; gap: 10px; }
+    .qty-btn { width: 24px; height: 24px; border: .5px solid var(--border); background: none; cursor: pointer; font-size: 14px; color: var(--text-sub); display: flex; align-items: center; justify-content: center; transition: border-color .2s, color .2s; border-radius: 50%; line-height: 1; }
+    .qty-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .qty-btn:disabled { opacity: .3; cursor: default; }
+    .qty-num { font-size: 14px; color: var(--text-main); font-weight: 300; min-width: 16px; text-align: center; }
+    .cart-select-btn { font-size: 10px; letter-spacing: .08em; color: var(--text-hint); background: none; border: .5px solid var(--border); padding: 4px 10px; cursor: pointer; transition: border-color .2s, color .2s; }
+    .cart-select-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .cart-select-btn.has-option { color: var(--accent); border-color: var(--accent); }
+
+    /* カートサマリー */
+    .cart-summary { margin-top: 16px; }
+    .cart-summary-empty { font-size: 12px; color: var(--text-hint); letter-spacing: .05em; text-align: center; padding: 16px 0; }
+    .cart-item-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: .5px solid var(--border); font-size: 12px; }
+    .cart-item-row:last-child { border-bottom: none; }
+    .cart-item-name { color: var(--text-main); letter-spacing: .05em; }
+    .cart-item-option { font-size: 11px; color: var(--text-hint); margin-top: 2px; }
+    .cart-item-qty { color: var(--text-sub); font-size: 11px; white-space: nowrap; margin-left: 12px; }
+
+    /* ===== オプション選択モーダル ===== */
+    .option-overlay { display: none; position: fixed; inset: 0; background: rgba(90,82,72,.45); z-index: 150; align-items: flex-end; justify-content: center; padding: 0; }
+    .option-overlay.open { display: flex; }
+    .option-modal { background: var(--surface); border-top: .5px solid var(--border); width: 100%; max-width: 520px; padding: 28px 28px 40px; }
+    .option-modal-title { font-family: 'Noto Serif JP', serif; font-weight: 300; font-size: 15px; letter-spacing: .08em; color: var(--text-main); margin-bottom: 20px; }
+    .option-group { margin-bottom: 20px; }
+    .option-group-label { font-size: 10px; letter-spacing: .15em; color: var(--text-sub); margin-bottom: 10px; }
+    .option-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .option-chip { padding: 7px 16px; border: .5px solid var(--border); font-size: 12px; color: var(--text-sub); cursor: pointer; transition: border-color .2s, background .2s, color .2s; letter-spacing: .05em; background: none; font-family: 'Noto Sans JP', sans-serif; }
+    .option-chip:hover { border-color: var(--border-focus); }
+    .option-chip.selected { border-color: var(--accent); background: var(--selected-bg); color: var(--accent); }
+    .option-modal-actions { display: flex; gap: 10px; margin-top: 24px; }
+    .option-btn { flex: 1; padding: 13px; border: .5px solid var(--accent); background: none; font-size: 11px; letter-spacing: .15em; color: var(--accent); cursor: pointer; font-family: 'Noto Sans JP', sans-serif; transition: background .2s, color .2s; }
+    .option-btn:hover { background: var(--accent); color: #fff; }
+    .option-btn-cancel { flex: 0 0 auto; padding: 13px 20px; border: .5px solid var(--border); background: none; font-size: 11px; letter-spacing: .1em; color: var(--text-sub); cursor: pointer; font-family: 'Noto Sans JP', sans-serif; }
+
+    /* ===== 管理パネル ===== */
     .admin-overlay { display: none; position: fixed; inset: 0; background: rgba(90,82,72,.45); z-index: 100; overflow-y: auto; padding: 32px 16px; }
     .admin-overlay.open { display: block; }
-    .admin-panel { background: var(--surface); border: .5px solid var(--border); width: 100%; max-width: 580px; padding: 36px 32px 40px; margin: 0 auto; }
+    .admin-panel { background: var(--surface); border: .5px solid var(--border); width: 100%; max-width: 600px; padding: 36px 32px 40px; margin: 0 auto; }
     .admin-title { font-family: 'Noto Serif JP', serif; font-weight: 300; font-size: 16px; letter-spacing: .1em; color: var(--text-main); margin-bottom: 4px; }
-    .admin-sub { font-size: 11px; color: var(--text-hint); letter-spacing: .05em; margin-bottom: 28px; }
+    .admin-sub { font-size: 11px; color: var(--text-hint); margin-bottom: 28px; }
     .admin-tabs { display: flex; gap: 0; margin-bottom: 28px; border-bottom: .5px solid var(--border); }
-    .admin-tab { padding: 10px 20px; font-size: 11px; letter-spacing: .1em; color: var(--text-hint); cursor: pointer; border-bottom: 1.5px solid transparent; margin-bottom: -1px; background: none; border-top: none; border-left: none; border-right: none; font-family: 'Noto Sans JP', sans-serif; }
+    .admin-tab { padding: 10px 16px; font-size: 11px; letter-spacing: .08em; color: var(--text-hint); cursor: pointer; border-bottom: 1.5px solid transparent; margin-bottom: -1px; background: none; border-top: none; border-left: none; border-right: none; font-family: 'Noto Sans JP', sans-serif; white-space: nowrap; }
     .admin-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
     .admin-tab-content { display: none; }
     .admin-tab-content.active { display: block; }
@@ -88,8 +125,8 @@
     .admin-input:focus { border-color: var(--border-focus); }
     .admin-textarea { width: 100%; border: .5px solid var(--border); padding: 10px 12px; font-size: 12px; font-family: 'Noto Sans JP', sans-serif; font-weight: 300; color: var(--text-main); background: transparent; outline: none; resize: none; min-height: 60px; margin-top: 4px; }
     .admin-textarea:focus { border-color: var(--border-focus); }
-    .products-admin-list { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
-    .product-admin-item { border: .5px solid var(--border); padding: 14px 16px; display: grid; grid-template-columns: 20px 1fr auto; gap: 12px; align-items: start; }
+    .products-admin-list { display: flex; flex-direction: column; gap: 16px; margin-top: 8px; }
+    .product-admin-item { border: .5px solid var(--border); padding: 16px; display: grid; grid-template-columns: 20px 1fr auto; gap: 12px; align-items: start; }
     .drag-handle { cursor: grab; color: var(--text-hint); font-size: 14px; padding-top: 2px; user-select: none; }
     .drag-handle:active { cursor: grabbing; }
     .product-admin-fields { display: flex; flex-direction: column; gap: 10px; }
@@ -99,6 +136,21 @@
     .product-admin-input:focus { border-color: var(--border-focus); }
     .product-delete-btn { background: none; border: none; cursor: pointer; font-size: 16px; color: var(--text-hint); padding: 0 4px; line-height: 1; }
     .product-delete-btn:hover { color: var(--error); }
+
+    /* オプション管理 */
+    .option-admin-wrap { margin-top: 8px; }
+    .option-admin-hint { font-size: 10px; color: var(--text-hint); margin-bottom: 6px; letter-spacing: .05em; }
+    .option-group-admin { border: .5px solid var(--border); padding: 12px; margin-bottom: 8px; }
+    .option-group-admin-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .option-group-name-input { flex: 1; border: none; border-bottom: .5px solid var(--border); padding: 4px 0; font-size: 12px; font-family: 'Noto Sans JP', sans-serif; color: var(--text-main); background: transparent; outline: none; }
+    .option-group-name-input:focus { border-color: var(--border-focus); }
+    .option-group-del { background: none; border: none; cursor: pointer; font-size: 14px; color: var(--text-hint); }
+    .option-group-del:hover { color: var(--error); }
+    .option-values-input { width: 100%; border: none; border-bottom: .5px solid var(--border); padding: 5px 0; font-size: 11px; font-family: 'Noto Sans JP', sans-serif; color: var(--text-main); background: transparent; outline: none; }
+    .option-values-hint { font-size: 9px; color: var(--text-hint); margin-top: 3px; letter-spacing: .05em; }
+    .add-option-group-btn { font-size: 10px; letter-spacing: .1em; color: var(--text-sub); background: none; border: .5px dashed var(--border); padding: 6px 12px; cursor: pointer; margin-top: 4px; }
+    .add-option-group-btn:hover { border-color: var(--accent); color: var(--accent); }
+
     .img-upload-area { border: .5px dashed var(--border); padding: 14px; text-align: center; cursor: pointer; transition: border-color .2s, background .2s; position: relative; }
     .img-upload-area:hover, .img-upload-area.dragover { border-color: var(--accent); background: var(--selected-bg); }
     .img-upload-area input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
@@ -106,30 +158,26 @@
     .img-thumb.show { display: block; }
     .img-upload-label { font-size: 10px; letter-spacing: .1em; color: var(--text-hint); }
     .img-upload-status { font-size: 10px; color: var(--accent); margin-top: 4px; min-height: 14px; }
-    .add-product-btn { width: 100%; padding: 12px; border: .5px dashed var(--border); background: none; cursor: pointer; font-size: 11px; letter-spacing: .1em; color: var(--text-sub); margin-top: 4px; transition: border-color .2s, color .2s; }
+    .add-product-btn { width: 100%; padding: 12px; border: .5px dashed var(--border); background: none; cursor: pointer; font-size: 11px; letter-spacing: .1em; color: var(--text-sub); margin-top: 4px; }
     .add-product-btn:hover { border-color: var(--accent); color: var(--accent); }
     .admin-actions { display: flex; gap: 10px; margin-top: 28px; }
-    .admin-btn { flex: 1; padding: 14px; border: .5px solid var(--accent); background: none; font-size: 11px; letter-spacing: .15em; color: var(--accent); cursor: pointer; transition: background .2s, color .2s; font-family: 'Noto Sans JP', sans-serif; }
+    .admin-btn { flex: 1; padding: 14px; border: .5px solid var(--accent); background: none; font-size: 11px; letter-spacing: .15em; color: var(--accent); cursor: pointer; font-family: 'Noto Sans JP', sans-serif; transition: background .2s, color .2s; }
     .admin-btn:hover { background: var(--accent); color: #fff; }
     .admin-btn-cancel { flex: 1; padding: 14px; border: .5px solid var(--border); background: none; font-size: 11px; letter-spacing: .15em; color: var(--text-sub); cursor: pointer; font-family: 'Noto Sans JP', sans-serif; }
-    .admin-btn-cancel:hover { border-color: var(--text-sub); }
-    .admin-status { font-size: 11px; color: var(--text-hint); text-align: center; margin-top: 12px; min-height: 16px; letter-spacing: .05em; }
+    .admin-status { font-size: 11px; color: var(--text-hint); text-align: center; margin-top: 12px; min-height: 16px; }
     .dragging { opacity: .4; }
     .drag-over-item { border-color: var(--accent) !important; }
 
-    /* ===== トリミングモーダル ===== */
+    /* トリミングモーダル */
     .crop-overlay { display: none; position: fixed; inset: 0; background: rgba(30,25,22,.85); z-index: 200; align-items: center; justify-content: center; padding: 24px; }
     .crop-overlay.open { display: flex; }
     .crop-modal { background: var(--surface); border: .5px solid var(--border); padding: 28px 24px 24px; width: 100%; max-width: 500px; }
     .crop-title { font-family: 'Noto Serif JP', serif; font-weight: 300; font-size: 14px; letter-spacing: .1em; color: var(--text-main); margin-bottom: 6px; }
-    .crop-sub { font-size: 11px; color: var(--text-hint); margin-bottom: 16px; letter-spacing: .05em; }
+    .crop-sub { font-size: 11px; color: var(--text-hint); margin-bottom: 16px; }
     .crop-stage-wrap { position: relative; width: 100%; aspect-ratio: 4/3; overflow: hidden; background: #2a2520; cursor: grab; user-select: none; }
     .crop-stage-wrap:active { cursor: grabbing; }
     .crop-img { position: absolute; transform-origin: 0 0; will-change: transform; pointer-events: none; display: block; }
-    .crop-grid { position: absolute; inset: 0; pointer-events: none;
-      background-image: linear-gradient(rgba(255,255,255,.15) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(255,255,255,.15) 1px, transparent 1px);
-      background-size: 33.33% 33.33%; }
+    .crop-grid { position: absolute; inset: 0; pointer-events: none; background-image: linear-gradient(rgba(255,255,255,.15) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.15) 1px, transparent 1px); background-size: 33.33% 33.33%; }
     .crop-zoom-row { display: flex; align-items: center; gap: 12px; margin-top: 12px; }
     .crop-zoom-label { font-size: 10px; letter-spacing: .1em; color: var(--text-hint); white-space: nowrap; }
     .crop-zoom-slider { flex: 1; accent-color: var(--accent); }
@@ -142,7 +190,6 @@
   </style>
 </head>
 <body>
-
 <header class="site-header">
   <span class="logo">iliy</span>
   <span class="logo-sub">Family Photo Studio</span>
@@ -152,6 +199,7 @@
   <p class="form-eyebrow" id="disp-eyebrow">PHOTO PRODUCTS</p>
   <h1 class="form-title" id="disp-title">ご注文フォーム</h1>
   <p class="form-desc" id="disp-desc">撮影後のフォトパネルについて、<br>ご希望をお聞かせください。</p>
+
   <div class="field">
     <label class="field-label" for="name">お名前 <span class="required-mark">*</span></label>
     <input type="text" id="name" placeholder="山田 花子" maxlength="50">
@@ -162,13 +210,20 @@
     <input type="date" id="shooting-date">
     <div class="error-msg" id="err-date">撮影日をご選択ください</div>
   </div>
+
   <hr class="divider">
+
   <div class="field">
     <div class="field-label">商品をお選びください <span class="required-mark">*</span></div>
     <div class="product-grid" id="product-grid"></div>
-    <div class="error-msg" id="err-product">商品をお選びください</div>
+    <div class="error-msg" id="err-product">商品を1つ以上お選びください</div>
+
+    <!-- カートサマリー -->
+    <div class="cart-summary" id="cart-summary"></div>
   </div>
+
   <hr class="divider">
+
   <div class="field">
     <div class="field-label">お受け取り方法 <span class="required-mark">*</span></div>
     <div class="radio-group">
@@ -198,6 +253,18 @@
 <footer class="site-footer">iliy — Family Photo Studio</footer>
 <button class="edit-fab" onclick="openAdmin()">edit</button>
 
+<!-- オプション選択モーダル -->
+<div class="option-overlay" id="option-overlay" onclick="optionOverlayClick(event)">
+  <div class="option-modal" id="option-modal">
+    <p class="option-modal-title" id="option-modal-title"></p>
+    <div id="option-groups-display"></div>
+    <div class="option-modal-actions">
+      <button class="option-btn-cancel" onclick="closeOptionModal()">キャンセル</button>
+      <button class="option-btn" onclick="confirmOption()">決 定</button>
+    </div>
+  </div>
+</div>
+
 <!-- 管理パネル -->
 <div class="admin-overlay" id="admin-overlay" onclick="overlayClick(event)">
   <div class="admin-panel">
@@ -209,8 +276,8 @@
       <button class="admin-tab" onclick="switchTab('github',this)">GitHub / セキュリティ</button>
     </div>
     <div class="admin-tab-content active" id="tab-text">
-      <div class="admin-section"><p class="admin-label">EYEBROW（小見出し）</p><input class="admin-input" id="cfg-eyebrow" placeholder="PHOTO PRODUCTS"></div>
-      <div class="admin-section"><p class="admin-label">フォームタイトル</p><input class="admin-input" id="cfg-title" placeholder="ご注文フォーム"></div>
+      <div class="admin-section"><p class="admin-label">EYEBROW</p><input class="admin-input" id="cfg-eyebrow"></div>
+      <div class="admin-section"><p class="admin-label">フォームタイトル</p><input class="admin-input" id="cfg-title"></div>
       <div class="admin-section"><p class="admin-label">説明文</p><textarea class="admin-textarea" id="cfg-desc" rows="3"></textarea></div>
     </div>
     <div class="admin-tab-content" id="tab-products">
@@ -221,13 +288,13 @@
       </div>
     </div>
     <div class="admin-tab-content" id="tab-github">
-      <div class="admin-section"><p class="admin-label">GitHubユーザー名</p><input class="admin-input" id="cfg-gh-user" placeholder="iliypicniko-hub"></div>
-      <div class="admin-section"><p class="admin-label">リポジトリ名</p><input class="admin-input" id="cfg-gh-repo" placeholder="iliy-product-form"></div>
-      <div class="admin-section"><p class="admin-label">Personal Access Token</p><input class="admin-input" type="password" id="cfg-gh-token" placeholder="ghp_..."></div>
-      <div class="admin-section"><p class="admin-label">画像保存フォルダ</p><input class="admin-input" id="cfg-gh-folder" placeholder="images"></div>
+      <div class="admin-section"><p class="admin-label">GitHubユーザー名</p><input class="admin-input" id="cfg-gh-user"></div>
+      <div class="admin-section"><p class="admin-label">リポジトリ名</p><input class="admin-input" id="cfg-gh-repo"></div>
+      <div class="admin-section"><p class="admin-label">Personal Access Token</p><input class="admin-input" type="password" id="cfg-gh-token"></div>
+      <div class="admin-section"><p class="admin-label">画像保存フォルダ</p><input class="admin-input" id="cfg-gh-folder"></div>
       <hr style="border:.5px solid var(--border);margin:20px 0;">
       <div class="admin-section"><p class="admin-label">GAS Web API URL</p><input class="admin-input" id="cfg-gas-url"></div>
-      <div class="admin-section"><p class="admin-label">管理パスワード（空欄でなし）</p><input class="admin-input" type="password" id="cfg-password"></div>
+      <div class="admin-section"><p class="admin-label">管理パスワード</p><input class="admin-input" type="password" id="cfg-password"></div>
     </div>
     <div class="admin-actions">
       <button class="admin-btn-cancel" onclick="closeAdmin()">キャンセル</button>
@@ -264,21 +331,27 @@ const DEFAULT_CONFIG = {
   gasUrl: "https://script.google.com/macros/s/AKfycbyTi4jlMQZrQolFEzo-mSShGtb2utdsIlKTD-uSagRK-8lpd4S5SJK54FBXkm8bfvcq/exec",
   password: "", eyebrow: "PHOTO PRODUCTS", title: "ご注文フォーム",
   desc: "撮影後のフォトパネルについて、\nご希望をお聞かせください。",
-  github: { user: "iliypicniko-hub", repo: "iliy-product-form", token: "", folder: "images" },
+  github: { user:"iliypicniko-hub", repo:"iliy-product-form", token:"", folder:"images" },
   products: [
-    { id:1, name:"ウッドパネル",      price:"¥12,000〜", img:"" },
-    { id:2, name:"ファブリックパネル", price:"¥10,000〜", img:"" },
-    { id:3, name:"ウッドフレーム",    price:"¥8,000〜",  img:"" },
-    { id:4, name:"マットフレーム",    price:"¥9,000〜",  img:"" }
+    { id:1, name:"ウッドパネル",      price:"¥12,000〜", img:"", optionGroups:[] },
+    { id:2, name:"ファブリックパネル", price:"¥10,000〜", img:"", optionGroups:[] },
+    { id:3, name:"ウッドフレーム",    price:"¥8,000〜",  img:"", optionGroups:[] },
+    { id:4, name:"マットフレーム",    price:"¥9,000〜",  img:"", optionGroups:[] }
   ]
 };
 
 let config = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
-let selectedProduct = null;
-let adminDragSrc = null;
 
-// トリミング状態
-let cropState = { productIndex: -1, file: null, x: 0, y: 0, scale: 1, dragging: false, startX: 0, startY: 0, imgW: 0, imgH: 0, stageW: 0, stageH: 0 };
+// カート: { productId: { qty, options: {groupName: value} } }
+let cart = {};
+
+// オプションモーダル用
+let optionTarget = null; // productId
+let optionTempSelections = {};
+
+// トリミング用
+let cropState = { productIndex:-1, file:null, x:0, y:0, scale:1, dragging:false, startX:0, startY:0, imgW:0, imgH:0, stageW:0, stageH:0 };
+let adminDragSrc = null;
 
 // ===== 起動 =====
 async function loadConfig() {
@@ -303,75 +376,197 @@ function renderProductGrid() {
   const grid = document.getElementById('product-grid');
   grid.innerHTML = '';
   (config.products||[]).forEach(p => {
+    const inCart = cart[p.id] && cart[p.id].qty > 0;
+    const qty    = inCart ? cart[p.id].qty : 0;
+    const opts   = inCart ? cart[p.id].options : {};
+    const optionGroups = p.optionGroups || [];
+    const hasOptions = optionGroups.length > 0;
+
+    // 選択済みオプション表示
+    let optBadge = '';
+    if (inCart && Object.keys(opts).length > 0) {
+      optBadge = Object.entries(opts).map(([k,v]) => `${k}：${v}`).join(' / ');
+    }
+
     const card = document.createElement('div');
-    card.className = 'product-card' + (selectedProduct===p.id?' selected':'');
+    card.className = 'product-card' + (inCart ? ' in-cart' : '');
     card.dataset.id = p.id;
-    card.onclick = () => selectProduct(p.id);
-    const inner = p.img
-      ? `<div class="product-img-wrap"><img class="product-img" src="${p.img}" alt="${p.name}" onerror="this.parentNode.innerHTML='<div class=product-img-placeholder>PHOTO</div>'"></div>`
-      : `<div class="product-img-wrap"><div class="product-img-placeholder">PHOTO</div></div>`;
-    card.innerHTML = inner + `<div class="product-info"><p class="product-name">${p.name}</p><p class="product-price">${p.price}</p></div>`;
+
+    const imgHtml = p.img
+      ? `<img class="product-img" src="${p.img}" alt="${p.name}" onerror="this.parentNode.innerHTML='<div class=product-img-placeholder>PHOTO</div>'">`
+      : `<div class="product-img-placeholder">PHOTO</div>`;
+
+    const optBtnLabel = hasOptions ? (inCart && Object.keys(opts).length>0 ? '変更' : '仕様を選ぶ') : '';
+    const optBtnClass = (inCart && Object.keys(opts).length>0) ? 'cart-select-btn has-option' : 'cart-select-btn';
+
+    card.innerHTML = `
+      <div class="product-img-wrap" onclick="imgClick(${p.id})">${imgHtml}</div>
+      <div class="product-info" onclick="imgClick(${p.id})">
+        <p class="product-name">${p.name}</p>
+        <p class="product-price">${p.price}</p>
+        ${optBadge ? `<p class="product-option-badge">${optBadge}</p>` : `<p class="product-option-badge"></p>`}
+      </div>
+      <div class="product-cart-row">
+        <div class="cart-qty-ctrl">
+          <button class="qty-btn" onclick="changeQty(${p.id},-1)" ${qty===0?'disabled':''}>−</button>
+          <span class="qty-num">${qty}</span>
+          <button class="qty-btn" onclick="changeQty(${p.id},1)">＋</button>
+        </div>
+        ${hasOptions ? `<button class="${optBtnClass}" onclick="openOptionModal(${p.id})">${optBtnLabel}</button>` : ''}
+      </div>`;
     grid.appendChild(card);
   });
+  renderCartSummary();
 }
 
-function selectProduct(id) {
-  selectedProduct = id;
-  document.querySelectorAll('.product-card').forEach(c => c.classList.toggle('selected', parseInt(c.dataset.id)===id));
+function imgClick(productId) {
+  const p = config.products.find(p => p.id === productId);
+  if (!p) return;
+  if (p.optionGroups && p.optionGroups.length > 0) {
+    openOptionModal(productId);
+  } else {
+    changeQty(productId, 1);
+  }
+}
+
+function changeQty(productId, delta) {
+  if (!cart[productId]) cart[productId] = { qty:0, options:{} };
+  cart[productId].qty = Math.max(0, cart[productId].qty + delta);
+  if (cart[productId].qty === 0) { delete cart[productId]; }
   hideError('err-product');
+  renderProductGrid();
+}
+
+function renderCartSummary() {
+  const el = document.getElementById('cart-summary');
+  const items = Object.entries(cart).filter(([,v]) => v.qty > 0);
+  if (items.length === 0) {
+    el.innerHTML = '';
+    return;
+  }
+  let html = '<div style="margin-top:16px;padding-top:16px;border-top:.5px solid var(--border);">';
+  html += '<p style="font-size:10px;letter-spacing:.15em;color:var(--text-hint);margin-bottom:10px;">ご注文内容</p>';
+  items.forEach(([id, v]) => {
+    const p = config.products.find(p => p.id == id);
+    if (!p) return;
+    const optStr = Object.entries(v.options||{}).map(([k,val])=>`${k}：${val}`).join(' / ');
+    html += `<div class="cart-item-row">
+      <div><p class="cart-item-name">${p.name}</p>${optStr?`<p class="cart-item-option">${optStr}</p>`:''}</div>
+      <span class="cart-item-qty">× ${v.qty}</span>
+    </div>`;
+  });
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+// ===== オプション選択モーダル =====
+function openOptionModal(productId) {
+  optionTarget = productId;
+  const p = config.products.find(p => p.id === productId);
+  if (!p) return;
+  // 現在の選択をコピー
+  optionTempSelections = Object.assign({}, (cart[productId]||{}).options||{});
+
+  document.getElementById('option-modal-title').textContent = p.name + ' — 仕様を選択';
+  const container = document.getElementById('option-groups-display');
+  container.innerHTML = '';
+  (p.optionGroups||[]).forEach(group => {
+    const div = document.createElement('div');
+    div.className = 'option-group';
+    div.innerHTML = `<p class="option-group-label">${group.name}</p><div class="option-chips" data-group="${group.name}"></div>`;
+    const chipsWrap = div.querySelector('.option-chips');
+    (group.values||[]).forEach(val => {
+      const btn = document.createElement('button');
+      btn.className = 'option-chip' + (optionTempSelections[group.name]===val?' selected':'');
+      btn.textContent = val;
+      btn.onclick = () => {
+        optionTempSelections[group.name] = val;
+        chipsWrap.querySelectorAll('.option-chip').forEach(c => c.classList.remove('selected'));
+        btn.classList.add('selected');
+      };
+      chipsWrap.appendChild(btn);
+    });
+    container.appendChild(div);
+  });
+  document.getElementById('option-overlay').classList.add('open');
+}
+
+function closeOptionModal() { document.getElementById('option-overlay').classList.remove('open'); }
+function optionOverlayClick(e) { if(e.target===document.getElementById('option-overlay')) closeOptionModal(); }
+
+function confirmOption() {
+  if (!optionTarget) return;
+  const p = config.products.find(p => p.id === optionTarget);
+  // 全グループの選択チェック
+  const required = (p.optionGroups||[]).map(g=>g.name);
+  const missing = required.filter(name => !optionTempSelections[name]);
+  if (missing.length > 0) { alert(`「${missing[0]}」を選択してください`); return; }
+  if (!cart[optionTarget]) cart[optionTarget] = { qty:0, options:{} };
+  cart[optionTarget].options = Object.assign({}, optionTempSelections);
+  if (cart[optionTarget].qty === 0) cart[optionTarget].qty = 1;
+  closeOptionModal();
+  renderProductGrid();
 }
 
 // ===== ラジオ =====
-document.querySelectorAll('.radio-item input[type="radio"]').forEach(r => {
-  r.addEventListener('change', function() {
-    this.closest('.radio-group').querySelectorAll('.radio-item').forEach(i => i.classList.remove('selected'));
+document.querySelectorAll('.radio-item input[type="radio"]').forEach(r=>{
+  r.addEventListener('change',function(){
+    this.closest('.radio-group').querySelectorAll('.radio-item').forEach(i=>i.classList.remove('selected'));
     this.closest('.radio-item').classList.add('selected');
-    if (this.name==='delivery') toggleAddress(this.value);
+    if(this.name==='delivery') toggleAddress(this.value);
   });
 });
-function toggleAddress(v) {
-  const f = document.getElementById('address-field');
-  if (v==='自宅配送') f.classList.add('show');
+function toggleAddress(v){
+  const f=document.getElementById('address-field');
+  if(v==='自宅配送') f.classList.add('show');
   else { f.classList.remove('show'); document.getElementById('address').value=''; hideError('err-address'); }
 }
 
 // ===== 送信 =====
-function validate() {
+function buildCartText() {
+  return Object.entries(cart).filter(([,v])=>v.qty>0).map(([id,v])=>{
+    const p=config.products.find(p=>p.id==id);
+    const name=p?p.name:id;
+    const opts=Object.entries(v.options||{}).map(([k,val])=>`${k}:${val}`).join(' ');
+    return `${name}${opts?' ('+opts+')':''} ×${v.qty}`;
+  }).join(' / ');
+}
+
+function validate(){
   let ok=true;
   const name=document.getElementById('name').value.trim();
   const shootingDate=document.getElementById('shooting-date').value;
   const delivery=document.querySelector('input[name="delivery"]:checked')?.value;
   const address=document.getElementById('address').value.trim();
+  const cartItems=Object.entries(cart).filter(([,v])=>v.qty>0);
   if(!name){showError('err-name');ok=false;}else hideError('err-name');
   if(!shootingDate){showError('err-date');ok=false;}else hideError('err-date');
-  if(!selectedProduct){showError('err-product');ok=false;}else hideError('err-product');
+  if(cartItems.length===0){showError('err-product');ok=false;}else hideError('err-product');
   if(!delivery){showError('err-delivery');ok=false;}else hideError('err-delivery');
   if(delivery==='自宅配送'&&!address){showError('err-address');ok=false;}else hideError('err-address');
   if(!ok) return null;
-  const p=config.products.find(p=>p.id===selectedProduct);
-  return {name,shootingDate,product:p?p.name:'',delivery,address};
+  return {name,shootingDate,product:buildCartText(),delivery,address};
 }
 function showError(id){document.getElementById(id).classList.add('show');}
 function hideError(id){document.getElementById(id).classList.remove('show');}
-async function handleSubmit() {
-  const data=validate(); if(!data) return;
-  const btn=document.getElementById('submit-btn');
-  btn.disabled=true; btn.textContent='送 信 中 . . .';
-  try {
+
+async function handleSubmit(){
+  const data=validate();if(!data)return;
+  const btn=document.getElementById('submit-btn');btn.disabled=true;btn.textContent='送 信 中 . . .';
+  try{
     await fetch(config.gasUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data),mode:'no-cors'});
     document.getElementById('form-card').style.display='none';
     document.getElementById('success-card').style.display='block';
-  } catch(e) { btn.disabled=false; btn.textContent='送 信 す る'; alert('送信に失敗しました。'); }
+  }catch(e){btn.disabled=false;btn.textContent='送 信 す る';alert('送信に失敗しました。');}
 }
 
 // ===== 管理パネル =====
-function switchTab(name,btn) {
+function switchTab(name,btn){
   document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.admin-tab-content').forEach(t=>t.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('tab-'+name).classList.add('active');
+  btn.classList.add('active');document.getElementById('tab-'+name).classList.add('active');
 }
-function openAdmin() {
+function openAdmin(){
   if(config.password){const pw=prompt('パスワードを入力してください');if(pw!==config.password){alert('パスワードが違います');return;}}
   document.getElementById('cfg-eyebrow').value=config.eyebrow;
   document.getElementById('cfg-title').value=config.title;
@@ -391,12 +586,25 @@ function closeAdmin(){document.getElementById('admin-overlay').classList.remove(
 function overlayClick(e){if(e.target===document.getElementById('admin-overlay'))closeAdmin();}
 
 // ===== 商品管理リスト =====
-function renderProductsAdmin() {
+function renderProductsAdmin(){
   const list=document.getElementById('products-admin-list');
   list.innerHTML='';
   (config.products||[]).forEach((p,i)=>{
+    const optGroups=p.optionGroups||[];
     const item=document.createElement('div');
-    item.className='product-admin-item'; item.draggable=true; item.dataset.index=i;
+    item.className='product-admin-item';item.draggable=true;item.dataset.index=i;
+
+    // オプショングループHTML生成
+    let optGroupsHtml=optGroups.map((g,gi)=>`
+      <div class="option-group-admin" data-gi="${gi}">
+        <div class="option-group-admin-header">
+          <input class="option-group-name-input" placeholder="グループ名（例：サイズ）" value="${g.name}" data-gi="${gi}" data-field="name">
+          <button class="option-group-del" onclick="deleteOptionGroup(${i},${gi})">×</button>
+        </div>
+        <input class="option-values-input" placeholder="選択肢をカンマ区切りで入力" value="${(g.values||[]).join(', ')}" data-gi="${gi}" data-field="values">
+        <p class="option-values-hint">例：S, M, L, XL</p>
+      </div>`).join('');
+
     item.innerHTML=`
       <span class="drag-handle">⠿</span>
       <div class="product-admin-fields">
@@ -414,10 +622,16 @@ function renderProductsAdmin() {
           </div>
           <input type="hidden" class="product-admin-input" data-field="img" id="img-url-${i}" value="${p.img}">
         </div>
+        <div class="option-admin-wrap">
+          <p class="admin-field-label" style="margin-top:8px;">サイズ・仕様オプション</p>
+          <p class="option-admin-hint">お客様がフォームで選択できる項目を設定します</p>
+          <div class="option-groups-container" id="opt-groups-${i}">${optGroupsHtml}</div>
+          <button class="add-option-group-btn" onclick="addOptionGroup(${i})">＋ 選択グループを追加</button>
+        </div>
       </div>
       <button class="product-delete-btn" onclick="deleteProductAdmin(${i})">×</button>`;
 
-    // 並び替えドラッグ
+    // ドラッグ並び替え
     item.addEventListener('dragstart',e=>{if(e.dataTransfer.types.includes('Files'))return;adminDragSrc=i;item.classList.add('dragging');e.dataTransfer.effectAllowed='move';});
     item.addEventListener('dragend',()=>item.classList.remove('dragging'));
     item.addEventListener('dragover',e=>{e.preventDefault();item.classList.add('drag-over-item');});
@@ -432,29 +646,48 @@ function renderProductsAdmin() {
       config.products.splice(i,0,moved);
       renderProductsAdmin();
     });
-
-    // 画像エリアのドロップ
     const area=item.querySelector('.img-upload-area');
     area.addEventListener('dragover',e=>{e.preventDefault();e.stopPropagation();area.classList.add('dragover');});
     area.addEventListener('dragleave',()=>area.classList.remove('dragover'));
-    area.addEventListener('drop',e=>{
-      e.preventDefault();e.stopPropagation();area.classList.remove('dragover');
-      const file=e.dataTransfer.files[0];
-      if(file&&file.type.startsWith('image/'))openCrop(file,i);
-    });
+    area.addEventListener('drop',e=>{e.preventDefault();e.stopPropagation();area.classList.remove('dragover');const f=e.dataTransfer.files[0];if(f&&f.type.startsWith('image/'))openCrop(f,i);});
     list.appendChild(item);
   });
 }
 
-function handleImageSelect(e,i){const file=e.target.files[0];if(file)openCrop(file,i);}
+function addOptionGroup(productIndex){
+  collectAdminFields();
+  if(!config.products[productIndex].optionGroups) config.products[productIndex].optionGroups=[];
+  config.products[productIndex].optionGroups.push({name:'',values:[]});
+  renderProductsAdmin();
+  switchTab('products', document.querySelector('.admin-tab:nth-child(2)'));
+}
+
+function deleteOptionGroup(productIndex,groupIndex){
+  collectAdminFields();
+  config.products[productIndex].optionGroups.splice(groupIndex,1);
+  renderProductsAdmin();
+}
 
 function collectAdminFields(){
   document.querySelectorAll('.product-admin-item').forEach((item,i)=>{
     if(!config.products[i])return;
     item.querySelectorAll('.product-admin-input').forEach(inp=>{if(inp.dataset.field)config.products[i][inp.dataset.field]=inp.value;});
+    // オプショングループ収集
+    const groups=[];
+    item.querySelectorAll('.option-group-admin').forEach(gEl=>{
+      const nameEl=gEl.querySelector('[data-field="name"]');
+      const valEl=gEl.querySelector('[data-field="values"]');
+      const name=nameEl?nameEl.value.trim():'';
+      const vals=valEl?valEl.value.split(',').map(v=>v.trim()).filter(Boolean):[];
+      if(name) groups.push({name,values:vals});
+    });
+    config.products[i].optionGroups=groups;
   });
 }
-function addProductAdmin(){collectAdminFields();config.products.push({id:Date.now(),name:'',price:'',img:''});renderProductsAdmin();}
+
+function handleImageSelect(e,i){const file=e.target.files[0];if(file)openCrop(file,i);}
+
+function addProductAdmin(){collectAdminFields();config.products.push({id:Date.now(),name:'',price:'',img:'',optionGroups:[]});renderProductsAdmin();}
 function deleteProductAdmin(i){collectAdminFields();config.products.splice(i,1);renderProductsAdmin();}
 
 async function saveSettings(){
@@ -473,190 +706,80 @@ async function saveSettings(){
 }
 
 // ===== トリミング =====
-function openCrop(file, productIndex) {
-  cropState.productIndex = productIndex;
-  cropState.file = file;
-  const img = document.getElementById('crop-img');
-  const url = URL.createObjectURL(file);
-  img.onload = () => {
-    cropState.imgW = img.naturalWidth;
-    cropState.imgH = img.naturalHeight;
-    const stage = document.getElementById('crop-stage');
-    cropState.stageW = stage.clientWidth;
-    cropState.stageH = stage.clientHeight;
-    // 初期スケール：短辺をステージに合わせる（全体が見えるように）
-    const scaleW = cropState.stageW / cropState.imgW;
-    const scaleH = cropState.stageH / cropState.imgH;
-    const initScale = Math.max(scaleW, scaleH);
-    cropState.scale = initScale;
-    document.getElementById('crop-zoom').min = Math.round(initScale * 100);
-    document.getElementById('crop-zoom').value = Math.round(initScale * 100);
-    document.getElementById('crop-zoom-val').textContent = Math.round(initScale * 100) + '%';
-    // 初期位置：中央
-    cropState.x = (cropState.stageW - cropState.imgW * initScale) / 2;
-    cropState.y = (cropState.stageH - cropState.imgH * initScale) / 2;
+function openCrop(file,productIndex){
+  cropState.productIndex=productIndex;cropState.file=file;
+  const img=document.getElementById('crop-img');
+  img.onload=()=>{
+    cropState.imgW=img.naturalWidth;cropState.imgH=img.naturalHeight;
+    const stage=document.getElementById('crop-stage');
+    cropState.stageW=stage.clientWidth;cropState.stageH=stage.clientHeight;
+    const scaleW=cropState.stageW/cropState.imgW,scaleH=cropState.stageH/cropState.imgH;
+    const s=Math.max(scaleW,scaleH);cropState.scale=s;
+    document.getElementById('crop-zoom').min=Math.round(s*100);
+    document.getElementById('crop-zoom').value=Math.round(s*100);
+    document.getElementById('crop-zoom-val').textContent=Math.round(s*100)+'%';
+    cropState.x=(cropState.stageW-cropState.imgW*s)/2;cropState.y=(cropState.stageH-cropState.imgH*s)/2;
     updateCropImg();
   };
-  img.src = url;
-  document.getElementById('crop-status').textContent = '';
+  img.src=URL.createObjectURL(file);
+  document.getElementById('crop-status').textContent='';
   document.getElementById('crop-overlay').classList.add('open');
 }
-
-function updateCropImg() {
-  const img = document.getElementById('crop-img');
-  img.style.transform = `translate(${cropState.x}px, ${cropState.y}px) scale(${cropState.scale})`;
-  img.style.width = cropState.imgW + 'px';
-  img.style.height = cropState.imgH + 'px';
-}
-
-function clampPos() {
-  const maxX = 0;
-  const minX = cropState.stageW - cropState.imgW * cropState.scale;
-  const maxY = 0;
-  const minY = cropState.stageH - cropState.imgH * cropState.scale;
-  cropState.x = Math.min(maxX, Math.max(minX, cropState.x));
-  cropState.y = Math.min(maxY, Math.max(minY, cropState.y));
-}
-
-// ズーム
-document.getElementById('crop-zoom').addEventListener('input', function() {
-  const newScale = parseInt(this.value) / 100;
-  // ステージ中心を基準にズーム
-  const cx = cropState.stageW / 2;
-  const cy = cropState.stageH / 2;
-  const ratio = newScale / cropState.scale;
-  cropState.x = cx + (cropState.x - cx) * ratio;
-  cropState.y = cy + (cropState.y - cy) * ratio;
-  cropState.scale = newScale;
-  document.getElementById('crop-zoom-val').textContent = this.value + '%';
-  clampPos();
-  updateCropImg();
+function updateCropImg(){const img=document.getElementById('crop-img');img.style.transform=`translate(${cropState.x}px,${cropState.y}px) scale(${cropState.scale})`;img.style.width=cropState.imgW+'px';img.style.height=cropState.imgH+'px';}
+function clampPos(){cropState.x=Math.min(0,Math.max(cropState.stageW-cropState.imgW*cropState.scale,cropState.x));cropState.y=Math.min(0,Math.max(cropState.stageH-cropState.imgH*cropState.scale,cropState.y));}
+document.getElementById('crop-zoom').addEventListener('input',function(){
+  const ns=parseInt(this.value)/100,cx=cropState.stageW/2,cy=cropState.stageH/2,r=ns/cropState.scale;
+  cropState.x=cx+(cropState.x-cx)*r;cropState.y=cy+(cropState.y-cy)*r;cropState.scale=ns;
+  document.getElementById('crop-zoom-val').textContent=this.value+'%';clampPos();updateCropImg();
 });
-
-// ドラッグ（マウス）
-const stage = document.getElementById('crop-stage');
-stage.addEventListener('mousedown', e => {
-  cropState.dragging = true;
-  cropState.startX = e.clientX - cropState.x;
-  cropState.startY = e.clientY - cropState.y;
-  e.preventDefault();
-});
-window.addEventListener('mousemove', e => {
-  if (!cropState.dragging) return;
-  cropState.x = e.clientX - cropState.startX;
-  cropState.y = e.clientY - cropState.startY;
-  clampPos();
-  updateCropImg();
-});
-window.addEventListener('mouseup', () => { cropState.dragging = false; });
-
-// タッチ対応
-stage.addEventListener('touchstart', e => {
-  if (e.touches.length !== 1) return;
-  cropState.dragging = true;
-  cropState.startX = e.touches[0].clientX - cropState.x;
-  cropState.startY = e.touches[0].clientY - cropState.y;
-  e.preventDefault();
-}, {passive: false});
-window.addEventListener('touchmove', e => {
-  if (!cropState.dragging || e.touches.length !== 1) return;
-  cropState.x = e.touches[0].clientX - cropState.startX;
-  cropState.y = e.touches[0].clientY - cropState.startY;
-  clampPos();
-  updateCropImg();
-}, {passive: false});
-window.addEventListener('touchend', () => { cropState.dragging = false; });
-
-function closeCrop() {
-  document.getElementById('crop-overlay').classList.remove('open');
-  URL.revokeObjectURL(document.getElementById('crop-img').src);
-}
-
-async function confirmCrop() {
-  const st = document.getElementById('crop-status');
-  st.textContent = 'トリミング中...';
-  try {
-    // Canvasでトリミング
-    const stageW = cropState.stageW;
-    const stageH = cropState.stageH;
-    const scale  = cropState.scale;
-    const offX   = -cropState.x / scale;
-    const offY   = -cropState.y / scale;
-    const srcW   = stageW / scale;
-    const srcH   = stageH / scale;
-
-    const canvas = document.createElement('canvas');
-    canvas.width  = stageW * 2; // 2xで高解像度
-    canvas.height = stageH * 2;
-    const ctx = canvas.getContext('2d');
-    const imgEl = document.getElementById('crop-img');
-    ctx.drawImage(imgEl, offX, offY, srcW, srcH, 0, 0, canvas.width, canvas.height);
-
-    const blob = await new Promise(r => canvas.toBlob(r, 'image/jpeg', 0.9));
-    const file = new File([blob], `product_${cropState.productIndex}_${Date.now()}.jpg`, {type:'image/jpeg'});
-
-    // サムネイル更新
-    const thumbUrl = URL.createObjectURL(blob);
-    const thumb = document.getElementById('img-thumb-' + cropState.productIndex);
-    thumb.src = thumbUrl; thumb.classList.add('show');
-    document.getElementById('img-label-' + cropState.productIndex).textContent = 'クリックまたはドロップで変更';
-
+const stage=document.getElementById('crop-stage');
+stage.addEventListener('mousedown',e=>{cropState.dragging=true;cropState.startX=e.clientX-cropState.x;cropState.startY=e.clientY-cropState.y;e.preventDefault();});
+window.addEventListener('mousemove',e=>{if(!cropState.dragging)return;cropState.x=e.clientX-cropState.startX;cropState.y=e.clientY-cropState.startY;clampPos();updateCropImg();});
+window.addEventListener('mouseup',()=>{cropState.dragging=false;});
+stage.addEventListener('touchstart',e=>{if(e.touches.length!==1)return;cropState.dragging=true;cropState.startX=e.touches[0].clientX-cropState.x;cropState.startY=e.touches[0].clientY-cropState.y;e.preventDefault();},{passive:false});
+window.addEventListener('touchmove',e=>{if(!cropState.dragging||e.touches.length!==1)return;cropState.x=e.touches[0].clientX-cropState.startX;cropState.y=e.touches[0].clientY-cropState.startY;clampPos();updateCropImg();},{passive:false});
+window.addEventListener('touchend',()=>{cropState.dragging=false;});
+function closeCrop(){document.getElementById('crop-overlay').classList.remove('open');URL.revokeObjectURL(document.getElementById('crop-img').src);}
+async function confirmCrop(){
+  const st=document.getElementById('crop-status');st.textContent='トリミング中...';
+  try{
+    const s=cropState.scale,stW=cropState.stageW,stH=cropState.stageH;
+    const canvas=document.createElement('canvas');canvas.width=stW*2;canvas.height=stH*2;
+    const ctx=canvas.getContext('2d');
+    ctx.drawImage(document.getElementById('crop-img'),-cropState.x/s,-cropState.y/s,stW/s,stH/s,0,0,canvas.width,canvas.height);
+    const blob=await new Promise(r=>canvas.toBlob(r,'image/jpeg',0.9));
+    const file=new File([blob],`product_${cropState.productIndex}_${Date.now()}.jpg`,{type:'image/jpeg'});
+    const thumbUrl=URL.createObjectURL(blob);
+    const thumb=document.getElementById('img-thumb-'+cropState.productIndex);
+    thumb.src=thumbUrl;thumb.classList.add('show');
+    document.getElementById('img-label-'+cropState.productIndex).textContent='クリックまたはドロップで変更';
     closeCrop();
-
-    // GitHub アップロード
-    await uploadToGitHub(file, cropState.productIndex);
-  } catch(e) {
-    st.textContent = '✗ エラー: ' + e.message;
-  }
+    await uploadToGitHub(file,cropState.productIndex);
+  }catch(e){st.textContent='✗ エラー: '+e.message;}
 }
-
-async function uploadToGitHub(file, i) {
-  const statusEl = document.getElementById('img-status-' + i);
-  const urlInput = document.getElementById('img-url-' + i);
-  statusEl.textContent = 'GitHubにアップロード中...';
-
-  const gh = {
-    user:   document.getElementById('cfg-gh-user').value   || config.github?.user,
-    repo:   document.getElementById('cfg-gh-repo').value   || config.github?.repo,
-    token:  document.getElementById('cfg-gh-token').value  || config.github?.token,
-    folder: document.getElementById('cfg-gh-folder').value || config.github?.folder || 'images'
-  };
-  if (!gh.token) { statusEl.textContent = '⚠ GitHubタブでトークンを設定してください'; return; }
-
-  try {
-    const base64 = await fileToBase64(file);
-    const fname  = file.name;
-    const path   = `${gh.folder}/${fname}`;
-    const apiUrl = `https://api.github.com/repos/${gh.user}/${gh.repo}/contents/${path}`;
-
-    let sha;
-    try { const c=await fetch(apiUrl,{headers:{Authorization:`token ${gh.token}`,Accept:'application/vnd.github.v3+json'}});if(c.ok){const d=await c.json();sha=d.sha;} } catch(e) {}
-
-    const body = {message:`upload product image: ${fname}`, content: base64};
-    if (sha) body.sha = sha;
-
-    const res = await fetch(apiUrl,{method:'PUT',headers:{Authorization:`token ${gh.token}`,Accept:'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify(body)});
-    if (!res.ok) throw new Error(await res.text());
-    const d = await res.json();
-    const imgUrl = d.content.download_url;
-
-    urlInput.value = imgUrl;
-    if (!config.products[i]) config.products[i] = {};
-    config.products[i].img = imgUrl;
-
-    // サムネイルをGitHub URLに切り替え
-    const thumb = document.getElementById('img-thumb-' + i);
-    thumb.src = imgUrl;
-
-    statusEl.textContent = '✓ アップロード完了';
-  } catch(err) {
-    statusEl.textContent = '✗ 失敗: ' + (err.message||'エラー');
-  }
+async function uploadToGitHub(file,i){
+  const statusEl=document.getElementById('img-status-'+i);
+  statusEl.textContent='GitHubにアップロード中...';
+  const gh={user:document.getElementById('cfg-gh-user').value||config.github?.user,repo:document.getElementById('cfg-gh-repo').value||config.github?.repo,token:document.getElementById('cfg-gh-token').value||config.github?.token,folder:document.getElementById('cfg-gh-folder').value||config.github?.folder||'images'};
+  if(!gh.token){statusEl.textContent='⚠ GitHubタブでトークンを設定してください';return;}
+  try{
+    const base64=await fileToBase64(file);
+    const path=`${gh.folder}/${file.name}`;
+    const apiUrl=`https://api.github.com/repos/${gh.user}/${gh.repo}/contents/${path}`;
+    let sha;try{const c=await fetch(apiUrl,{headers:{Authorization:`token ${gh.token}`,Accept:'application/vnd.github.v3+json'}});if(c.ok){const d=await c.json();sha=d.sha;}}catch(e){}
+    const body={message:`upload: ${file.name}`,content:base64};if(sha)body.sha=sha;
+    const res=await fetch(apiUrl,{method:'PUT',headers:{Authorization:`token ${gh.token}`,Accept:'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(!res.ok)throw new Error(await res.text());
+    const d=await res.json();
+    const imgUrl=d.content.download_url;
+    document.getElementById('img-url-'+i).value=imgUrl;
+    if(!config.products[i])config.products[i]={};
+    config.products[i].img=imgUrl;
+    document.getElementById('img-thumb-'+i).src=imgUrl;
+    statusEl.textContent='✓ アップロード完了';
+  }catch(err){statusEl.textContent='✗ 失敗: '+(err.message||'エラー');}
 }
-
-function fileToBase64(file) {
-  return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=()=>rej(new Error('読み込み失敗'));r.readAsDataURL(file);});
-}
+function fileToBase64(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=()=>rej(new Error('読み込み失敗'));r.readAsDataURL(file);});}
 
 loadConfig();
 </script>
