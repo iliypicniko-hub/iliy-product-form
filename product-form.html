@@ -23,12 +23,10 @@
     .form-eyebrow { font-size: 10px; letter-spacing: .2em; color: var(--text-hint); margin-bottom: 10px; }
     .form-title { font-family: 'Noto Serif JP', serif; font-weight: 300; font-size: 20px;
       letter-spacing: .08em; color: var(--text-sub); margin-bottom: 8px; line-height: 1.5; }
-    .form-desc { font-size: 12px; color: var(--text-hint); line-height: 2; margin-bottom: 40px;
-      letter-spacing: .05em; font-weight: 300; }
+    .form-desc { font-size: 12px; color: var(--text-hint); line-height: 2; margin-bottom: 40px; letter-spacing: .05em; font-weight: 300; }
     .divider { border: none; border-top: .5px solid var(--border); margin: 32px 0; }
     .field { margin-bottom: 28px; }
-    .field-label { display: flex; align-items: center; gap: 6px; font-size: 11px;
-      letter-spacing: .12em; color: var(--text-sub); margin-bottom: 10px; }
+    .field-label { display: flex; align-items: center; gap: 6px; font-size: 11px; letter-spacing: .12em; color: var(--text-sub); margin-bottom: 10px; }
     .required-mark { font-size: 10px; color: var(--error); letter-spacing: 0; }
     input[type="text"], input[type="date"], textarea {
       width: 100%; border: none; border-bottom: .5px solid var(--border);
@@ -43,12 +41,10 @@
       transition: border-color .2s; overflow: hidden; position: relative; }
     .product-card:hover { border-color: var(--border-focus); }
     .product-card.selected { border-color: var(--accent); }
-    .product-card.selected::after { content: '✓'; position: absolute; top: 8px; right: 10px;
-      font-size: 11px; color: var(--accent); }
+    .product-card.selected::after { content: '✓'; position: absolute; top: 8px; right: 10px; font-size: 11px; color: var(--accent); }
     .product-img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; }
     .product-img-placeholder { width: 100%; aspect-ratio: 4/3; background: #EDE9E4;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 9px; letter-spacing: .15em; color: var(--text-hint); }
+      display: flex; align-items: center; justify-content: center; font-size: 9px; letter-spacing: .15em; color: var(--text-hint); }
     .product-info { padding: 12px 14px 14px; }
     .product-name { font-size: 12px; letter-spacing: .08em; color: var(--text-main); font-weight: 400; margin-bottom: 4px; }
     .product-price { font-size: 11px; color: var(--text-hint); letter-spacing: .05em; font-weight: 300; }
@@ -63,88 +59,92 @@
     .radio-dot { width: 14px; height: 14px; border: .5px solid var(--border); border-radius: 50%;
       flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: border-color .2s; }
     .radio-item.selected .radio-dot { border-color: var(--accent); }
-    .radio-dot::after { content: ''; width: 6px; height: 6px; border-radius: 50%;
-      background: var(--accent); opacity: 0; transition: opacity .2s; }
+    .radio-dot::after { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); opacity: 0; transition: opacity .2s; }
     .radio-item.selected .radio-dot::after { opacity: 1; }
     .radio-item input[type="radio"] { display: none; }
     .address-field { display: none; margin-top: 16px; }
     .address-field.show { display: block; }
     .btn-wrap { margin-top: 40px; }
-    .btn { width: 100%; background: transparent; color: var(--accent);
-      border: .5px solid var(--accent); padding: 16px;
-      font-size: 12px; font-family: 'Noto Sans JP', sans-serif;
-      font-weight: 300; letter-spacing: .2em; cursor: pointer; transition: background .2s, color .2s; }
+    .btn { width: 100%; background: transparent; color: var(--accent); border: .5px solid var(--accent); padding: 16px;
+      font-size: 12px; font-family: 'Noto Sans JP', sans-serif; font-weight: 300; letter-spacing: .2em; cursor: pointer; transition: background .2s, color .2s; }
     .btn:hover:not(:disabled) { background: var(--accent); color: #fff; }
     .btn:disabled { opacity: .4; cursor: not-allowed; }
-    .success-card { background: var(--surface); width: 100%; max-width: 520px;
-      padding: 64px 36px; border: .5px solid var(--border); text-align: center; display: none; }
+    .success-card { background: var(--surface); width: 100%; max-width: 520px; padding: 64px 36px; border: .5px solid var(--border); text-align: center; display: none; }
     .success-mark { font-size: 11px; letter-spacing: .2em; color: var(--text-hint); margin-bottom: 24px; }
-    .success-title { font-family: 'Noto Serif JP', serif; font-weight: 300; font-size: 20px;
-      color: var(--text-main); margin-bottom: 20px; letter-spacing: .05em; }
+    .success-title { font-family: 'Noto Serif JP', serif; font-weight: 300; font-size: 20px; color: var(--text-main); margin-bottom: 20px; letter-spacing: .05em; }
     .success-msg { font-size: 12px; color: var(--text-sub); line-height: 2.2; letter-spacing: .05em; }
-    .site-footer { margin-top: 48px; font-size: 10px; letter-spacing: .15em; color: var(--text-hint);
-      display: flex; flex-direction: column; align-items: center; gap: 16px; }
-    .edit-trigger { background: none; border: none; cursor: pointer; font-size: 9px;
-      letter-spacing: .15em; color: transparent; padding: 8px 16px; user-select: none; }
-    .edit-trigger:hover { color: var(--text-hint); }
-    .admin-overlay { display: none; position: fixed; inset: 0; background: rgba(90,82,72,.45);
-      z-index: 100; overflow-y: auto; padding: 32px 16px; }
+    .site-footer { margin-top: 48px; font-size: 10px; letter-spacing: .15em; color: var(--text-hint); }
+
+    /* 右下固定editボタン */
+    .edit-fab {
+      position: fixed; bottom: 24px; right: 24px; z-index: 50;
+      background: rgba(125, 101, 88, 0.12); border: .5px solid rgba(125, 101, 88, 0.25);
+      color: rgba(125, 101, 88, 0.45); padding: 10px 16px;
+      font-size: 10px; letter-spacing: .2em; cursor: pointer;
+      transition: background .2s, color .2s, border-color .2s;
+      font-family: 'Noto Sans JP', sans-serif; font-weight: 300;
+    }
+    .edit-fab:hover { background: rgba(125,101,88,.22); color: var(--accent); border-color: rgba(125,101,88,.5); }
+
+    /* 管理パネル */
+    .admin-overlay { display: none; position: fixed; inset: 0; background: rgba(90,82,72,.45); z-index: 100; overflow-y: auto; padding: 32px 16px; }
     .admin-overlay.open { display: block; }
-    .admin-panel { background: var(--surface); border: .5px solid var(--border);
-      width: 100%; max-width: 560px; padding: 36px 32px 40px; margin: 0 auto; }
-    .admin-title { font-family: 'Noto Serif JP', serif; font-weight: 300; font-size: 16px;
-      letter-spacing: .1em; color: var(--text-main); margin-bottom: 4px; }
+    .admin-panel { background: var(--surface); border: .5px solid var(--border); width: 100%; max-width: 580px; padding: 36px 32px 40px; margin: 0 auto; }
+    .admin-title { font-family: 'Noto Serif JP', serif; font-weight: 300; font-size: 16px; letter-spacing: .1em; color: var(--text-main); margin-bottom: 4px; }
     .admin-sub { font-size: 11px; color: var(--text-hint); letter-spacing: .05em; margin-bottom: 28px; }
+    .admin-tabs { display: flex; gap: 0; margin-bottom: 28px; border-bottom: .5px solid var(--border); }
+    .admin-tab { padding: 10px 20px; font-size: 11px; letter-spacing: .1em; color: var(--text-hint); cursor: pointer; border-bottom: 1.5px solid transparent; margin-bottom: -1px; background: none; border-top: none; border-left: none; border-right: none; font-family: 'Noto Sans JP', sans-serif; }
+    .admin-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .admin-tab-content { display: none; }
+    .admin-tab-content.active { display: block; }
     .admin-section { margin-bottom: 24px; }
     .admin-label { font-size: 10px; letter-spacing: .15em; color: var(--text-sub); margin-bottom: 8px; }
-    .admin-input { width: 100%; border: none; border-bottom: .5px solid var(--border);
-      padding: 8px 0; font-size: 13px; font-family: 'Noto Sans JP', sans-serif;
-      font-weight: 300; color: var(--text-main); background: transparent; outline: none; }
+    .admin-input { width: 100%; border: none; border-bottom: .5px solid var(--border); padding: 8px 0; font-size: 13px; font-family: 'Noto Sans JP', sans-serif; font-weight: 300; color: var(--text-main); background: transparent; outline: none; }
     .admin-input:focus { border-color: var(--border-focus); }
-    .admin-textarea { width: 100%; border: .5px solid var(--border); padding: 10px 12px;
-      font-size: 12px; font-family: 'Noto Sans JP', sans-serif; font-weight: 300;
-      color: var(--text-main); background: transparent; outline: none; resize: none;
-      min-height: 60px; margin-top: 4px; }
+    .admin-textarea { width: 100%; border: .5px solid var(--border); padding: 10px 12px; font-size: 12px; font-family: 'Noto Sans JP', sans-serif; font-weight: 300; color: var(--text-main); background: transparent; outline: none; resize: none; min-height: 60px; margin-top: 4px; }
     .admin-textarea:focus { border-color: var(--border-focus); }
+
+    /* 商品管理 */
     .products-admin-list { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
-    .product-admin-item { border: .5px solid var(--border); padding: 14px 16px;
-      display: grid; grid-template-columns: 20px 1fr auto; gap: 12px; align-items: start; }
+    .product-admin-item { border: .5px solid var(--border); padding: 14px 16px; display: grid; grid-template-columns: 20px 1fr auto; gap: 12px; align-items: start; }
     .drag-handle { cursor: grab; color: var(--text-hint); font-size: 14px; padding-top: 2px; user-select: none; }
     .drag-handle:active { cursor: grabbing; }
-    .product-admin-fields { display: flex; flex-direction: column; gap: 8px; }
+    .product-admin-fields { display: flex; flex-direction: column; gap: 10px; }
     .product-admin-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .admin-field-label { font-size: 9px; letter-spacing: .12em; color: var(--text-hint); margin-bottom: 3px; }
-    .product-admin-input { width: 100%; border: none; border-bottom: .5px solid var(--border);
-      padding: 5px 0; font-size: 12px; font-family: 'Noto Sans JP', sans-serif;
-      font-weight: 300; color: var(--text-main); background: transparent; outline: none; }
+    .product-admin-input { width: 100%; border: none; border-bottom: .5px solid var(--border); padding: 5px 0; font-size: 12px; font-family: 'Noto Sans JP', sans-serif; font-weight: 300; color: var(--text-main); background: transparent; outline: none; }
     .product-admin-input:focus { border-color: var(--border-focus); }
-    .product-delete-btn { background: none; border: none; cursor: pointer; font-size: 16px;
-      color: var(--text-hint); padding: 0 4px; line-height: 1; }
+    .product-delete-btn { background: none; border: none; cursor: pointer; font-size: 16px; color: var(--text-hint); padding: 0 4px; line-height: 1; }
     .product-delete-btn:hover { color: var(--error); }
-    .add-product-btn { width: 100%; padding: 12px; border: .5px dashed var(--border);
-      background: none; cursor: pointer; font-size: 11px; letter-spacing: .1em;
-      color: var(--text-sub); margin-top: 4px; transition: border-color .2s, color .2s; }
+
+    /* 画像アップロードエリア */
+    .img-upload-area {
+      border: .5px dashed var(--border); padding: 14px; text-align: center;
+      cursor: pointer; transition: border-color .2s, background .2s; position: relative;
+    }
+    .img-upload-area:hover, .img-upload-area.dragover { border-color: var(--accent); background: var(--selected-bg); }
+    .img-upload-area input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+    .img-upload-preview { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: none; }
+    .img-upload-preview.show { display: block; }
+    .img-upload-label { font-size: 10px; letter-spacing: .1em; color: var(--text-hint); }
+    .img-upload-status { font-size: 10px; color: var(--accent); margin-top: 4px; min-height: 14px; }
+    .img-url-row { display: flex; align-items: center; gap: 6px; margin-top: 6px; }
+    .img-url-text { font-size: 10px; color: var(--text-hint); word-break: break-all; flex: 1; }
+
+    .add-product-btn { width: 100%; padding: 12px; border: .5px dashed var(--border); background: none; cursor: pointer; font-size: 11px; letter-spacing: .1em; color: var(--text-sub); margin-top: 4px; transition: border-color .2s, color .2s; }
     .add-product-btn:hover { border-color: var(--accent); color: var(--accent); }
     .admin-actions { display: flex; gap: 10px; margin-top: 28px; }
-    .admin-btn { flex: 1; padding: 14px; border: .5px solid var(--accent); background: none;
-      font-size: 11px; letter-spacing: .15em; color: var(--accent); cursor: pointer; transition: background .2s, color .2s; }
+    .admin-btn { flex: 1; padding: 14px; border: .5px solid var(--accent); background: none; font-size: 11px; letter-spacing: .15em; color: var(--accent); cursor: pointer; transition: background .2s, color .2s; font-family: 'Noto Sans JP', sans-serif; }
     .admin-btn:hover { background: var(--accent); color: #fff; }
-    .admin-btn-cancel { flex: 1; padding: 14px; border: .5px solid var(--border); background: none;
-      font-size: 11px; letter-spacing: .15em; color: var(--text-sub); cursor: pointer; }
+    .admin-btn-cancel { flex: 1; padding: 14px; border: .5px solid var(--border); background: none; font-size: 11px; letter-spacing: .15em; color: var(--text-sub); cursor: pointer; font-family: 'Noto Sans JP', sans-serif; }
     .admin-btn-cancel:hover { border-color: var(--text-sub); }
-    .admin-status { font-size: 11px; color: var(--text-hint); text-align: center;
-      margin-top: 12px; min-height: 16px; letter-spacing: .05em; }
-    .gas-setting { margin-top: 20px; padding-top: 20px; border-top: .5px solid var(--border); }
-    .gas-toggle { font-size: 10px; letter-spacing: .12em; color: var(--text-hint);
-      cursor: pointer; background: none; border: none; }
-    .gas-toggle:hover { color: var(--text-sub); }
-    .gas-fields { margin-top: 12px; display: none; }
-    .gas-fields.open { display: block; }
+    .admin-status { font-size: 11px; color: var(--text-hint); text-align: center; margin-top: 12px; min-height: 16px; letter-spacing: .05em; }
     .dragging { opacity: .4; }
-    .drag-over { border-color: var(--accent) !important; }
+    .drag-over-item { border-color: var(--accent) !important; }
   </style>
 </head>
 <body>
+
 <header class="site-header">
   <span class="logo">iliy</span>
   <span class="logo-sub">Family Photo Studio</span>
@@ -178,7 +178,7 @@
 
   <div class="field">
     <div class="field-label">お受け取り方法 <span class="required-mark">*</span></div>
-    <div class="radio-group" id="delivery-group">
+    <div class="radio-group">
       <label class="radio-item">
         <input type="radio" name="delivery" value="店舗受け取り">
         <span class="radio-dot"></span>店舗受け取り
@@ -210,52 +210,82 @@
   <p class="success-msg">ご回答ありがとうございます。<br>商品の準備が整いましたら、<br>あらためてご連絡いたします。</p>
 </div>
 
-<footer class="site-footer">
-  <span>iliy — Family Photo Studio</span>
-  <button class="edit-trigger" onclick="openAdmin()">edit</button>
-</footer>
+<footer class="site-footer">iliy — Family Photo Studio</footer>
+
+<!-- 右下固定editボタン -->
+<button class="edit-fab" onclick="openAdmin()">edit</button>
 
 <!-- 管理パネル -->
 <div class="admin-overlay" id="admin-overlay" onclick="overlayClick(event)">
   <div class="admin-panel">
     <p class="admin-title">設定</p>
-    <p class="admin-sub">フォームの文言・商品内容を変更できます</p>
-    <div class="admin-section">
-      <p class="admin-label">EYEBROW（小見出し）</p>
-      <input class="admin-input" id="cfg-eyebrow" placeholder="PHOTO PRODUCTS">
+    <p class="admin-sub">フォームの文言・商品・GitHub連携を管理できます</p>
+
+    <div class="admin-tabs">
+      <button class="admin-tab active" onclick="switchTab('text',this)">文言</button>
+      <button class="admin-tab" onclick="switchTab('products',this)">商品</button>
+      <button class="admin-tab" onclick="switchTab('github',this)">GitHub / セキュリティ</button>
     </div>
-    <div class="admin-section">
-      <p class="admin-label">フォームタイトル</p>
-      <input class="admin-input" id="cfg-title" placeholder="ご注文フォーム">
+
+    <!-- 文言タブ -->
+    <div class="admin-tab-content active" id="tab-text">
+      <div class="admin-section">
+        <p class="admin-label">EYEBROW（小見出し）</p>
+        <input class="admin-input" id="cfg-eyebrow" placeholder="PHOTO PRODUCTS">
+      </div>
+      <div class="admin-section">
+        <p class="admin-label">フォームタイトル</p>
+        <input class="admin-input" id="cfg-title" placeholder="ご注文フォーム">
+      </div>
+      <div class="admin-section">
+        <p class="admin-label">説明文（改行はそのまま反映）</p>
+        <textarea class="admin-textarea" id="cfg-desc" rows="3"></textarea>
+      </div>
     </div>
-    <div class="admin-section">
-      <p class="admin-label">説明文</p>
-      <textarea class="admin-textarea" id="cfg-desc" rows="3"></textarea>
+
+    <!-- 商品タブ -->
+    <div class="admin-tab-content" id="tab-products">
+      <div class="admin-section">
+        <p class="admin-label">商品リスト（ドラッグで並び替え）</p>
+        <div class="products-admin-list" id="products-admin-list"></div>
+        <button class="add-product-btn" onclick="addProductAdmin()">＋ 商品を追加</button>
+      </div>
     </div>
-    <hr class="divider" style="margin: 20px 0;">
-    <div class="admin-section">
-      <p class="admin-label">商品リスト（ドラッグで並び替え）</p>
-      <div class="products-admin-list" id="products-admin-list"></div>
-      <button class="add-product-btn" onclick="addProductAdmin()">＋ 商品を追加</button>
+
+    <!-- GitHub/セキュリティタブ -->
+    <div class="admin-tab-content" id="tab-github">
+      <div class="admin-section">
+        <p class="admin-label">GitHubユーザー名</p>
+        <input class="admin-input" id="cfg-gh-user" placeholder="iliypicniko-hub">
+      </div>
+      <div class="admin-section">
+        <p class="admin-label">リポジトリ名</p>
+        <input class="admin-input" id="cfg-gh-repo" placeholder="iliy-product-form">
+      </div>
+      <div class="admin-section">
+        <p class="admin-label">Personal Access Token</p>
+        <input class="admin-input" type="password" id="cfg-gh-token" placeholder="ghp_...">
+      </div>
+      <div class="admin-section">
+        <p class="admin-label">画像保存フォルダ</p>
+        <input class="admin-input" id="cfg-gh-folder" placeholder="images">
+      </div>
+      <hr style="border:.5px solid var(--border); margin: 20px 0;">
+      <div class="admin-section">
+        <p class="admin-label">GAS Web API URL</p>
+        <input class="admin-input" id="cfg-gas-url" placeholder="https://script.google.com/macros/s/...">
+      </div>
+      <div class="admin-section">
+        <p class="admin-label">管理パスワード（空欄でなし）</p>
+        <input class="admin-input" type="password" id="cfg-password" placeholder="設定しない場合は空欄">
+      </div>
     </div>
+
     <div class="admin-actions">
       <button class="admin-btn-cancel" onclick="closeAdmin()">キャンセル</button>
       <button class="admin-btn" onclick="saveSettings()">保 存 す る</button>
     </div>
     <p class="admin-status" id="admin-status"></p>
-    <div class="gas-setting">
-      <button class="gas-toggle" onclick="toggleGasFields()">⚙ GAS / セキュリティ設定</button>
-      <div class="gas-fields" id="gas-fields">
-        <div class="admin-section" style="margin-top:12px;">
-          <p class="admin-label">GAS Web API URL</p>
-          <input class="admin-input" id="cfg-gas-url" placeholder="https://script.google.com/macros/s/...">
-        </div>
-        <div class="admin-section">
-          <p class="admin-label">管理パスワード（設定すると次回から聞かれます）</p>
-          <input class="admin-input" type="password" id="cfg-password" placeholder="空欄でパスワードなし">
-        </div>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -266,11 +296,12 @@ const DEFAULT_CONFIG = {
   eyebrow: "PHOTO PRODUCTS",
   title: "ご注文フォーム",
   desc: "撮影後のフォトパネルについて、\nご希望をお聞かせください。",
+  github: { user: "iliypicniko-hub", repo: "iliy-product-form", token: "", folder: "images" },
   products: [
-    { id: 1, name: "ウッドパネル",     price: "¥12,000〜", img: "" },
+    { id: 1, name: "ウッドパネル",      price: "¥12,000〜", img: "" },
     { id: 2, name: "ファブリックパネル", price: "¥10,000〜", img: "" },
-    { id: 3, name: "ウッドフレーム",   price: "¥8,000〜",  img: "" },
-    { id: 4, name: "マットフレーム",   price: "¥9,000〜",  img: "" }
+    { id: 3, name: "ウッドフレーム",    price: "¥8,000〜",  img: "" },
+    { id: 4, name: "マットフレーム",    price: "¥9,000〜",  img: "" }
   ]
 };
 
@@ -278,11 +309,13 @@ let config = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
 let selectedProduct = null;
 let adminDragSrc = null;
 
+// ===== 起動 =====
 async function loadConfig() {
   try {
     const res = await fetch(config.gasUrl + "?action=getConfig");
     const data = await res.json();
     if (data && data.config) config = Object.assign({}, DEFAULT_CONFIG, data.config);
+    if (!config.github) config.github = DEFAULT_CONFIG.github;
   } catch(e) {}
   applyConfig();
 }
@@ -294,6 +327,7 @@ function applyConfig() {
   renderProductGrid();
 }
 
+// ===== 商品グリッド =====
 function renderProductGrid() {
   const grid = document.getElementById('product-grid');
   grid.innerHTML = '';
@@ -312,12 +346,11 @@ function renderProductGrid() {
 
 function selectProduct(id) {
   selectedProduct = id;
-  document.querySelectorAll('.product-card').forEach(c => {
-    c.classList.toggle('selected', parseInt(c.dataset.id) === id);
-  });
+  document.querySelectorAll('.product-card').forEach(c => c.classList.toggle('selected', parseInt(c.dataset.id) === id));
   hideError('err-product');
 }
 
+// ===== ラジオ =====
 document.querySelectorAll('.radio-item input[type="radio"]').forEach(radio => {
   radio.addEventListener('change', function() {
     this.closest('.radio-group').querySelectorAll('.radio-item').forEach(i => i.classList.remove('selected'));
@@ -332,16 +365,17 @@ function toggleAddress(v) {
   else { f.classList.remove('show'); document.getElementById('address').value = ''; hideError('err-address'); }
 }
 
+// ===== バリデーション・送信 =====
 function validate() {
   let ok = true;
   const name         = document.getElementById('name').value.trim();
   const shootingDate = document.getElementById('shooting-date').value;
   const delivery     = document.querySelector('input[name="delivery"]:checked')?.value;
   const address      = document.getElementById('address').value.trim();
-  if (!name)           { showError('err-name');     ok=false; } else hideError('err-name');
-  if (!shootingDate)   { showError('err-date');     ok=false; } else hideError('err-date');
-  if (!selectedProduct){ showError('err-product');  ok=false; } else hideError('err-product');
-  if (!delivery)       { showError('err-delivery'); ok=false; } else hideError('err-delivery');
+  if (!name)            { showError('err-name');     ok=false; } else hideError('err-name');
+  if (!shootingDate)    { showError('err-date');     ok=false; } else hideError('err-date');
+  if (!selectedProduct) { showError('err-product');  ok=false; } else hideError('err-product');
+  if (!delivery)        { showError('err-delivery'); ok=false; } else hideError('err-delivery');
   if (delivery === '自宅配送' && !address) { showError('err-address'); ok=false; } else hideError('err-address');
   if (!ok) return null;
   const p = config.products.find(p => p.id === selectedProduct);
@@ -357,8 +391,7 @@ async function handleSubmit() {
   const btn = document.getElementById('submit-btn');
   btn.disabled = true; btn.textContent = '送 信 中 . . .';
   try {
-    await fetch(config.gasUrl, { method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify(data), mode:'no-cors' });
+    await fetch(config.gasUrl, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(data), mode:'no-cors' });
     document.getElementById('form-card').style.display = 'none';
     document.getElementById('success-card').style.display = 'block';
   } catch(e) {
@@ -367,16 +400,29 @@ async function handleSubmit() {
   }
 }
 
+// ===== 管理パネル =====
+function switchTab(name, btn) {
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.admin-tab-content').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+}
+
 function openAdmin() {
   if (config.password) {
     const pw = prompt('パスワードを入力してください');
     if (pw !== config.password) { alert('パスワードが違います'); return; }
   }
-  document.getElementById('cfg-eyebrow').value  = config.eyebrow;
-  document.getElementById('cfg-title').value    = config.title;
-  document.getElementById('cfg-desc').value     = config.desc;
-  document.getElementById('cfg-gas-url').value  = config.gasUrl;
-  document.getElementById('cfg-password').value = config.password || '';
+  document.getElementById('cfg-eyebrow').value   = config.eyebrow;
+  document.getElementById('cfg-title').value     = config.title;
+  document.getElementById('cfg-desc').value      = config.desc;
+  document.getElementById('cfg-gas-url').value   = config.gasUrl;
+  document.getElementById('cfg-password').value  = config.password || '';
+  const gh = config.github || {};
+  document.getElementById('cfg-gh-user').value   = gh.user   || 'iliypicniko-hub';
+  document.getElementById('cfg-gh-repo').value   = gh.repo   || 'iliy-product-form';
+  document.getElementById('cfg-gh-token').value  = gh.token  || '';
+  document.getElementById('cfg-gh-folder').value = gh.folder || 'images';
   renderProductsAdmin();
   document.getElementById('admin-overlay').classList.add('open');
   document.getElementById('admin-status').textContent = '';
@@ -385,6 +431,7 @@ function openAdmin() {
 function closeAdmin() { document.getElementById('admin-overlay').classList.remove('open'); }
 function overlayClick(e) { if (e.target === document.getElementById('admin-overlay')) closeAdmin(); }
 
+// ===== 商品管理リスト =====
 function renderProductsAdmin() {
   const list = document.getElementById('products-admin-list');
   list.innerHTML = '';
@@ -393,6 +440,8 @@ function renderProductsAdmin() {
     item.className = 'product-admin-item';
     item.draggable = true;
     item.dataset.index = i;
+
+    const hasImg = !!p.img;
     item.innerHTML = `
       <span class="drag-handle" title="ドラッグで並び替え">⠿</span>
       <div class="product-admin-fields">
@@ -400,23 +449,124 @@ function renderProductsAdmin() {
           <div><p class="admin-field-label">商品名</p><input class="product-admin-input" data-field="name" value="${p.name}" placeholder="商品名"></div>
           <div><p class="admin-field-label">料金</p><input class="product-admin-input" data-field="price" value="${p.price}" placeholder="¥0,000〜"></div>
         </div>
-        <div><p class="admin-field-label" style="margin-top:6px;">画像URL</p>
-          <input class="product-admin-input" data-field="img" value="${p.img}" placeholder="https://... （空欄でプレースホルダー）" style="width:100%"></div>
+        <div>
+          <p class="admin-field-label" style="margin-top:8px;">商品画像</p>
+          <div class="img-upload-area" id="upload-area-${i}">
+            <input type="file" accept="image/*" onchange="handleImageSelect(event,${i})">
+            ${hasImg ? `<img class="img-upload-preview show" id="img-preview-${i}" src="${p.img}">` : `<img class="img-upload-preview" id="img-preview-${i}" src="">`}
+            <p class="img-upload-label" id="img-upload-label-${i}">${hasImg ? '画像を変更するにはクリックまたはドロップ' : 'クリックまたはドロップで画像をアップロード'}</p>
+            <p class="img-upload-status" id="img-status-${i}"></p>
+          </div>
+          <input type="hidden" class="product-admin-input" data-field="img" id="img-url-${i}" value="${p.img}">
+        </div>
       </div>
       <button class="product-delete-btn" onclick="deleteProductAdmin(${i})" title="削除">×</button>`;
-    item.addEventListener('dragstart', e => { adminDragSrc = i; item.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; });
-    item.addEventListener('dragend',   () => item.classList.remove('dragging'));
-    item.addEventListener('dragover',  e => { e.preventDefault(); item.classList.add('drag-over'); });
-    item.addEventListener('dragleave', () => item.classList.remove('drag-over'));
+
+    // ドラッグ&ドロップ（並び替え）
+    item.addEventListener('dragstart', e => {
+      // ファイルドロップ中は並び替えしない
+      if (e.dataTransfer.types.includes('Files')) return;
+      adminDragSrc = i; item.classList.add('dragging'); e.dataTransfer.effectAllowed='move';
+    });
+    item.addEventListener('dragend', () => item.classList.remove('dragging'));
+    item.addEventListener('dragover', e => { e.preventDefault(); item.classList.add('drag-over-item'); });
+    item.addEventListener('dragleave', () => item.classList.remove('drag-over-item'));
     item.addEventListener('drop', e => {
-      e.preventDefault(); item.classList.remove('drag-over');
+      item.classList.remove('drag-over-item');
+      if (e.dataTransfer.files && e.dataTransfer.files.length > 0) return; // 画像ドロップは別処理
+      e.preventDefault();
       if (adminDragSrc === null || adminDragSrc === i) return;
       collectAdminFields();
       const moved = config.products.splice(adminDragSrc, 1)[0];
       config.products.splice(i, 0, moved);
       renderProductsAdmin();
     });
+
+    // 画像エリアのドロップ
+    const area = item.querySelector('.img-upload-area');
+    area.addEventListener('dragover', e => { e.preventDefault(); e.stopPropagation(); area.classList.add('dragover'); });
+    area.addEventListener('dragleave', () => area.classList.remove('dragover'));
+    area.addEventListener('drop', e => {
+      e.preventDefault(); e.stopPropagation(); area.classList.remove('dragover');
+      const file = e.dataTransfer.files[0];
+      if (file && file.type.startsWith('image/')) processImageFile(file, i);
+    });
+
     list.appendChild(item);
+  });
+}
+
+function handleImageSelect(e, i) {
+  const file = e.target.files[0];
+  if (file) processImageFile(file, i);
+}
+
+async function processImageFile(file, i) {
+  const statusEl  = document.getElementById('img-status-' + i);
+  const previewEl = document.getElementById('img-preview-' + i);
+  const labelEl   = document.getElementById('img-upload-label-' + i);
+  const urlInput  = document.getElementById('img-url-' + i);
+
+  // プレビュー表示
+  const reader = new FileReader();
+  reader.onload = e => { previewEl.src = e.target.result; previewEl.classList.add('show'); };
+  reader.readAsDataURL(file);
+
+  statusEl.textContent = 'アップロード中...';
+
+  const gh = {
+    user:   document.getElementById('cfg-gh-user').value   || config.github?.user,
+    repo:   document.getElementById('cfg-gh-repo').value   || config.github?.repo,
+    token:  document.getElementById('cfg-gh-token').value  || config.github?.token,
+    folder: document.getElementById('cfg-gh-folder').value || config.github?.folder || 'images'
+  };
+
+  if (!gh.token) { statusEl.textContent = '⚠ GitHubのトークンを設定してください（GitHubタブ）'; return; }
+
+  try {
+    const base64 = await fileToBase64(file);
+    const ext    = file.name.split('.').pop().toLowerCase();
+    const fname  = `product_${i}_${Date.now()}.${ext}`;
+    const path   = `${gh.folder}/${fname}`;
+    const apiUrl = `https://api.github.com/repos/${gh.user}/${gh.repo}/contents/${path}`;
+
+    // 既存ファイルのSHAを取得（上書き用）
+    let sha = undefined;
+    try {
+      const check = await fetch(apiUrl, { headers: { Authorization: `token ${gh.token}`, Accept: 'application/vnd.github.v3+json' } });
+      if (check.ok) { const d = await check.json(); sha = d.sha; }
+    } catch(e) {}
+
+    const body = { message: `upload product image: ${fname}`, content: base64 };
+    if (sha) body.sha = sha;
+
+    const res = await fetch(apiUrl, {
+      method: 'PUT',
+      headers: { Authorization: `token ${gh.token}`, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+
+    if (!res.ok) throw new Error(await res.text());
+    const d = await res.json();
+    const imgUrl = d.content.download_url;
+
+    urlInput.value = imgUrl;
+    if (!config.products[i]) config.products[i] = {};
+    config.products[i].img = imgUrl;
+    previewEl.src = imgUrl;
+    statusEl.textContent = '✓ アップロード完了';
+    labelEl.textContent  = '画像を変更するにはクリックまたはドロップ';
+  } catch(err) {
+    statusEl.textContent = '✗ 失敗: ' + (err.message || 'エラー');
+  }
+}
+
+function fileToBase64(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload  = () => res(r.result.split(',')[1]);
+    r.onerror = () => rej(new Error('読み込み失敗'));
+    r.readAsDataURL(file);
   });
 }
 
@@ -424,7 +574,7 @@ function collectAdminFields() {
   document.querySelectorAll('.product-admin-item').forEach((item, i) => {
     if (!config.products[i]) return;
     item.querySelectorAll('.product-admin-input').forEach(inp => {
-      config.products[i][inp.dataset.field] = inp.value;
+      if (inp.dataset.field) config.products[i][inp.dataset.field] = inp.value;
     });
   });
 }
@@ -448,18 +598,25 @@ async function saveSettings() {
   config.desc     = document.getElementById('cfg-desc').value    || DEFAULT_CONFIG.desc;
   config.gasUrl   = document.getElementById('cfg-gas-url').value || DEFAULT_CONFIG.gasUrl;
   config.password = document.getElementById('cfg-password').value;
+  config.github   = {
+    user:   document.getElementById('cfg-gh-user').value,
+    repo:   document.getElementById('cfg-gh-repo').value,
+    token:  document.getElementById('cfg-gh-token').value,
+    folder: document.getElementById('cfg-gh-folder').value || 'images'
+  };
+
   const st = document.getElementById('admin-status');
   st.textContent = '保存中...';
   try {
-    await fetch(config.gasUrl, { method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ action:'saveConfig', config }), mode:'no-cors' });
+    await fetch(config.gasUrl, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ action:'saveConfig', config }), mode:'no-cors'
+    });
     st.textContent = '保存しました';
     applyConfig();
-    setTimeout(closeAdmin, 800);
+    setTimeout(closeAdmin, 900);
   } catch(e) { st.textContent = '保存に失敗しました'; }
 }
-
-function toggleGasFields() { document.getElementById('gas-fields').classList.toggle('open'); }
 
 loadConfig();
 </script>
