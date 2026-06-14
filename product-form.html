@@ -725,8 +725,8 @@ function buildCartText() {
     const p=config.products.find(p=>p.id==id);
     const name=p?p.name:id;
     const opts=Object.entries(v.options||{}).map(([k,raw])=>{
-      const parsed=parseOptionVal(raw);
-      return `${k}:${parsed.display}`;
+      const valName=raw.split('/')[0].trim();
+      return `${k}:${valName}`;
     }).join(' ');
     return `${name}${opts?' ('+opts+')':''} ×${v.qty}`;
   }).join(' / ');
