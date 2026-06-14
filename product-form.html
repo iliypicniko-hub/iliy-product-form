@@ -551,14 +551,34 @@ function validate(){
   const name=document.getElementById('name').value.trim();
   const shootingDate=document.getElementById('shooting-date').value;
   const delivery=document.querySelector('input[name="delivery"]:checked')?.value;
-  const address=document.getElementById('address').value.trim();
   const cartItems=Object.entries(cart).filter(([,v])=>v.qty>0);
   if(!name){showError('err-name');ok=false;}else hideError('err-name');
   if(!shootingDate){showError('err-date');ok=false;}else hideError('err-date');
   if(cartItems.length===0){showError('err-product');ok=false;}else hideError('err-product');
   if(!delivery){showError('err-delivery');ok=false;}else hideError('err-delivery');
-  if(delivery==='自宅配送'&&!address){showError('err-address');ok=false;}else hideError('err-address');
+
+  // 住所バリデーション
+  if(delivery==='自宅配送'){
+    const postal=document.getElementById('postal-code').value.replace(/[^0-9]/g,'');
+    const pref=document.getElementById('address-pref').value.trim();
+    const detail=document.getElementById('address-detail').value.trim();
+    if(!postal||postal.length!==7){showError('err-postal');ok=false;}else hideError('err-postal');
+    if(!pref){showError('err-pref');ok=false;}else hideError('err-pref');
+    if(!detail){showError('err-detail');ok=false;}else hideError('err-detail');
+  } else {
+    hideError('err-postal');hideError('err-pref');hideError('err-detail');
+  }
+
   if(!ok) return null;
+
+  // 住所を結合
+  let address='';
+  if(delivery==='自宅配送'){
+    const postal=document.getElementById('postal-code').value.replace(/[^0-9]/g,'');
+    const pref=document.getElementById('address-pref').value.trim();
+    const detail=document.getElementById('address-detail').value.trim();
+    address=`〒${postal.slice(0,3)}-${postal.slice(3)} ${pref} ${detail}`;
+  }
   return {name,shootingDate,product:buildCartText(),delivery,address};
 }
 function showError(id){document.getElementById(id).classList.add('show');}
