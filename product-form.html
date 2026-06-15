@@ -277,7 +277,7 @@
     <div class="field-label">お受け取り方法 <span class="required-mark">*</span></div>
     <div class="radio-group">
       <label class="radio-item"><input type="radio" name="delivery" value="店舗受け取り"><span class="radio-dot"></span>店舗受け取り</label>
-      <label class="radio-item"><input type="radio" name="delivery" value="自宅配送"><span class="radio-dot"></span>自宅配送（配送料 ¥1,000）</label>
+      <label class="radio-item"><input type="radio" name="delivery" value="自宅配送"><span class="radio-dot"></span><span id="delivery-fee-label">自宅配送（配送料 ¥1,100）</span></label>
     </div>
     <div class="error-msg" id="err-delivery">お受け取り方法をお選びください</div>
   </div>
@@ -367,6 +367,9 @@
       <div class="admin-section"><p class="admin-label">EYEBROW</p><input class="admin-input" id="cfg-eyebrow"></div>
       <div class="admin-section"><p class="admin-label">フォームタイトル</p><input class="admin-input" id="cfg-title"></div>
       <div class="admin-section"><p class="admin-label">説明文</p><textarea class="admin-textarea" id="cfg-desc" rows="3"></textarea></div>
+      <hr style="border:.5px solid var(--border);margin:20px 0;">
+      <div class="admin-section"><p class="admin-label">自宅配送ラベル（ラジオボタンの表示）</p><input class="admin-input" id="cfg-fee-label" placeholder="自宅配送（配送料 ¥1,100）"></div>
+      <div class="admin-section"><p class="admin-label">配送料（スプレッドシート記録用）</p><input class="admin-input" id="cfg-fee" placeholder="¥1,100"></div>
     </div>
     <div class="admin-tab-content" id="tab-products">
       <div class="admin-section">
@@ -456,6 +459,9 @@ function applyConfig() {
   document.getElementById('disp-eyebrow').textContent = config.eyebrow;
   document.getElementById('disp-title').textContent   = config.title;
   document.getElementById('disp-desc').innerHTML      = config.desc.replace(/\n/g,'<br>');
+  const dl = config.delivery || {};
+  const labelEl = document.getElementById('delivery-fee-label');
+  if (labelEl) labelEl.textContent = dl.feeLabel || '自宅配送（配送料 ¥1,100）';
   renderProductGrid();
 }
 
@@ -793,6 +799,9 @@ function openAdmin(){
   document.getElementById('cfg-desc').value=config.desc;
   document.getElementById('cfg-gas-url').value=config.gasUrl;
   document.getElementById('cfg-password').value=config.password||'';
+  const dl=config.delivery||{};
+  document.getElementById('cfg-fee-label').value=dl.feeLabel||'自宅配送（配送料 ¥1,100）';
+  document.getElementById('cfg-fee').value=dl.fee||'¥1,100';
   const gh=config.github||{};
   document.getElementById('cfg-gh-user').value=gh.user||'iliypicniko-hub';
   document.getElementById('cfg-gh-repo').value=gh.repo||'iliy-product-form';
@@ -954,6 +963,7 @@ async function saveSettings(){
   config.gasUrl=document.getElementById('cfg-gas-url').value||DEFAULT_CONFIG.gasUrl;
   config.password=document.getElementById('cfg-password').value;
   config.github={user:document.getElementById('cfg-gh-user').value,repo:document.getElementById('cfg-gh-repo').value,token:document.getElementById('cfg-gh-token').value,folder:document.getElementById('cfg-gh-folder').value||'images'};
+  config.delivery={feeLabel:document.getElementById('cfg-fee-label').value||'自宅配送（配送料 ¥1,100）',fee:document.getElementById('cfg-fee').value||'¥1,100'};
   const st=document.getElementById('admin-status');st.textContent='保存中...';
   try{
     await fetch(config.gasUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'saveConfig',config}),mode:'no-cors'});
