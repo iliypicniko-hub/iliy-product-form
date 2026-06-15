@@ -238,6 +238,8 @@
     .product-popup-add-btn { flex: 1; padding: 14px; border: .5px solid var(--accent); background: none; font-size: 11px; letter-spacing: .2em; color: var(--accent); cursor: pointer; font-family: 'Noto Sans JP', sans-serif; transition: background .2s, color .2s; }
     .product-popup-add-btn:hover { background: var(--accent); color: #fff; }
     .product-popup-cancel-btn { padding: 14px 20px; border: .5px solid var(--border); background: none; font-size: 11px; letter-spacing: .1em; color: var(--text-sub); cursor: pointer; font-family: 'Noto Sans JP', sans-serif; }
+    .product-popup-remove-btn { padding: 14px 16px; border: .5px solid var(--error); background: none; font-size: 11px; letter-spacing: .15em; color: var(--error); cursor: pointer; font-family: 'Noto Sans JP', sans-serif; transition: background .2s, color .2s; }
+    .product-popup-remove-btn:hover { background: var(--error); color: #fff; }
     .product-popup-error { font-size: 11px; color: var(--error); margin-bottom: 10px; min-height: 16px; }
 
     /* カードをシンプルに */
@@ -337,6 +339,7 @@
       <p class="product-popup-error" id="product-popup-error"></p>
       <div class="product-popup-actions">
         <button class="product-popup-cancel-btn" onclick="closeProductPopup()">キャンセル</button>
+        <button class="product-popup-remove-btn" id="popup-remove-btn" onclick="removeFromCart()" style="display:none;">削 除</button>
         <button class="product-popup-add-btn" onclick="confirmProductPopup()">カートに追加</button>
       </div>
     </div>
@@ -609,6 +612,10 @@ function openProductPopup(productId) {
     groupsEl.appendChild(row);
   }
 
+  // カートに入っていれば削除ボタンを表示
+  const removeBtn = document.getElementById('popup-remove-btn');
+  if (removeBtn) removeBtn.style.display = cart[productId] ? 'block' : 'none';
+
   document.getElementById('product-popup-overlay').classList.add('open');
 }
 
@@ -624,6 +631,13 @@ function popupChangeQty(delta) {
 
 function closeProductPopup() {
   document.getElementById('product-popup-overlay').classList.remove('open');
+}
+
+function removeFromCart() {
+  if (popupProductId) delete cart[popupProductId];
+  hideError('err-product');
+  closeProductPopup();
+  renderProductGrid();
 }
 
 function popupOverlayClick(e) {
@@ -643,8 +657,12 @@ function confirmProductPopup() {
       document.getElementById('product-popup-error').textContent = 'サイズと個数を選択してください';
       return;
     }
-    // カートにsizeQtys形式で保存
-    cart[popupProductId] = { qty: totalQty, sizeQtys: Object.assign({}, popupSizeQtys), options: {} };
+    // 合計0なら削除、それ以外はカートに保存
+    if (totalQty === 0) {
+      delete cart[popupProductId];
+    } else {
+      cart[popupProductId] = { qty: totalQty, sizeQtys: Object.assign({}, popupSizeQtys), options: {} };
+    }
   } else {
     // オプションなし → シンプル個数
     cart[popupProductId] = { qty: popupQty, sizeQtys: {}, options: {} };
