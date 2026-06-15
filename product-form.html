@@ -212,11 +212,21 @@
     .product-popup-group { margin-bottom: 16px; }
     .product-popup-group-label { font-size: 10px; letter-spacing: .15em; color: var(--text-sub); margin-bottom: 8px; }
     .product-popup-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-    .product-popup-chip { padding: 8px 16px; border: .5px solid var(--border); font-size: 12px; color: var(--text-sub); cursor: pointer; background: none; font-family: 'Noto Sans JP', sans-serif; transition: border-color .15s, background .15s, color .15s; display: flex; flex-direction: column; align-items: center; gap: 2px; }
-    .product-popup-chip:hover { border-color: var(--border-focus); }
-    .product-popup-chip.selected { border-color: var(--accent); background: var(--selected-bg); color: var(--accent); }
-    .product-popup-chip-price { font-size: 10px; color: var(--text-hint); }
-    .product-popup-chip.selected .product-popup-chip-price { color: var(--accent); }
+    /* サイズ別個数テーブル */
+    .size-qty-table { width: 100%; border-collapse: collapse; margin-top: 4px; }
+    .size-qty-table th { font-size: 9px; letter-spacing: .12em; color: var(--text-hint); font-weight: 400; padding: 4px 8px 8px; text-align: left; border-bottom: .5px solid var(--border); }
+    .size-qty-table th:last-child { text-align: center; }
+    .size-qty-table td { padding: 10px 8px; border-bottom: .5px solid var(--border); vertical-align: middle; }
+    .size-qty-table tr:last-child td { border-bottom: none; }
+    .size-qty-name { font-size: 13px; color: var(--text-main); letter-spacing: .05em; }
+    .size-qty-price { font-size: 11px; color: var(--text-hint); margin-top: 2px; }
+    .size-qty-ctrl { display: flex; align-items: center; gap: 10px; justify-content: center; }
+    .size-qty-btn { width: 28px; height: 28px; border: .5px solid var(--border); background: none; cursor: pointer; font-size: 16px; color: var(--text-sub); border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: border-color .15s, color .15s; line-height: 1; flex-shrink: 0; }
+    .size-qty-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .size-qty-btn:disabled { opacity: .3; cursor: default; }
+    .size-qty-num { font-size: 15px; color: var(--text-main); font-weight: 300; min-width: 20px; text-align: center; }
+    .size-qty-num.active { color: var(--accent); font-weight: 400; }
+    /* 旧chip（オプションなし商品用シンプル個数） */
     .product-popup-qty-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; margin-top: 4px; }
     .product-popup-qty-label { font-size: 10px; letter-spacing: .15em; color: var(--text-sub); }
     .product-popup-qty-ctrl { display: flex; align-items: center; gap: 14px; }
@@ -324,14 +334,6 @@
       <p class="product-popup-name" id="product-popup-name"></p>
       <p class="product-popup-price" id="product-popup-price"></p>
       <div id="product-popup-groups"></div>
-      <div class="product-popup-qty-row">
-        <span class="product-popup-qty-label">個 数</span>
-        <div class="product-popup-qty-ctrl">
-          <button class="product-popup-qty-btn" id="popup-qty-minus" onclick="popupChangeQty(-1)">−</button>
-          <span class="product-popup-qty-num" id="popup-qty-num">1</span>
-          <button class="product-popup-qty-btn" onclick="popupChangeQty(1)">＋</button>
-        </div>
-      </div>
       <p class="product-popup-error" id="product-popup-error"></p>
       <div class="product-popup-actions">
         <button class="product-popup-cancel-btn" onclick="closeProductPopup()">キャンセル</button>
@@ -485,11 +487,13 @@ function renderProductGrid() {
     // カート内容バッジ
     let badgeText = '';
     if (inCart) {
-      const opts = cart[p.id].options || {};
-      const optStr = Object.entries(opts).map(([,raw]) => {
-        return raw.split('/')[0].trim();
-      }).join(' ');
-      badgeText = `${optStr ? optStr+' ' : ''}×${qty}`;
+      const sizeQtys = cart[p.id].sizeQtys || {};
+      const sizeEntries = Object.entries(sizeQtys).filter(([,q])=>q>0);
+      if (sizeEntries.length > 0) {
+        badgeText = sizeEntries.map(([raw,q])=>`${raw.split('/')[0].trim()}×${q}`).join(' ');
+      } else {
+        badgeText = `×${qty}`;
+      }
     }
 
     card.innerHTML = imgHtml + `
@@ -508,6 +512,9 @@ let popupProductId = null;
 let popupQty = 1;
 let popupSelections = {};
 
+// popupSizeQtys: { "S / ¥8,000": 2, "M / ¥10,000": 1 } のような形
+let popupSizeQtys = {};
+
 function openProductPopup(productId) {
   const p = config.products.find(p => p.id === productId);
   if (!p) return;
@@ -515,8 +522,10 @@ function openProductPopup(productId) {
 
   // 既存カート値を引き継ぎ
   const existing = cart[productId];
+  // sizeQtys形式で保持
+  popupSizeQtys = existing ? Object.assign({}, existing.sizeQtys || {}) : {};
   popupQty = existing ? existing.qty : 1;
-  popupSelections = existing ? Object.assign({}, existing.options) : {};
+  popupSelections = existing ? Object.assign({}, existing.options || {}) : {};
 
   // 画像
   const imgWrap = document.getElementById('product-popup-img-wrap');
@@ -525,65 +534,92 @@ function openProductPopup(productId) {
     : `<div class="product-popup-img-placeholder">PHOTO</div>`;
 
   document.getElementById('product-popup-name').textContent = p.name;
-  updatePopupPrice();
+  document.getElementById('product-popup-price').textContent = p.price;
+  document.getElementById('product-popup-error').textContent = '';
 
-  // オプショングループ描画
   const groupsEl = document.getElementById('product-popup-groups');
   groupsEl.innerHTML = '';
-  (p.optionGroups||[]).forEach(group => {
-    const div = document.createElement('div');
-    div.className = 'product-popup-group';
-    div.innerHTML = `<p class="product-popup-group-label">${group.name}</p><div class="product-popup-chips" data-group="${group.name}"></div>`;
-    const chipsWrap = div.querySelector('.product-popup-chips');
-    (group.values||[]).forEach(rawVal => {
-      const parts    = rawVal.split('/').map(s=>s.trim());
-      const valName  = parts[0];
-      const valPrice = parts[1] || '';
-      const isSelected = popupSelections[group.name] === rawVal.trim();
-      const btn = document.createElement('button');
-      btn.className = 'product-popup-chip' + (isSelected ? ' selected' : '');
-      btn.dataset.val = rawVal.trim();
-      btn.innerHTML = `<span>${valName}</span>${valPrice ? `<span class="product-popup-chip-price">${valPrice}</span>` : ''}`;
-      btn.onclick = () => {
-        popupSelections[group.name] = rawVal.trim();
-        chipsWrap.querySelectorAll('.product-popup-chip').forEach(c => c.classList.remove('selected'));
-        btn.classList.add('selected');
-        updatePopupPrice();
-        document.getElementById('product-popup-error').textContent = '';
-      };
-      chipsWrap.appendChild(btn);
-    });
-    groupsEl.appendChild(div);
-  });
 
-  // 個数
-  document.getElementById('popup-qty-num').textContent = popupQty;
-  document.getElementById('popup-qty-minus').disabled = (popupQty <= 1);
-  document.getElementById('product-popup-error').textContent = '';
+  const optionGroups = p.optionGroups || [];
+
+  if (optionGroups.length > 0) {
+    // サイズ別個数テーブルを描画（最初のグループをサイズとして扱う）
+    optionGroups.forEach(group => {
+      const div = document.createElement('div');
+      div.className = 'product-popup-group';
+      div.innerHTML = `<p class="product-popup-group-label">${group.name}</p>`;
+
+      const table = document.createElement('table');
+      table.className = 'size-qty-table';
+      table.innerHTML = `<thead><tr><th>${group.name}</th><th style="text-align:center;">個 数</th></tr></thead><tbody></tbody>`;
+      const tbody = table.querySelector('tbody');
+
+      (group.values||[]).forEach(rawVal => {
+        const parts    = rawVal.split('/').map(s=>s.trim());
+        const valName  = parts[0];
+        const valPrice = parts[1] || '';
+        const qty = popupSizeQtys[rawVal.trim()] || 0;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>
+            <p class="size-qty-name">${valName}</p>
+            ${valPrice ? `<p class="size-qty-price">${valPrice}</p>` : ''}
+          </td>
+          <td>
+            <div class="size-qty-ctrl">
+              <button class="size-qty-btn" data-val="${rawVal.trim()}" data-delta="-1" ${qty===0?'disabled':''}>−</button>
+              <span class="size-qty-num ${qty>0?'active':''}" id="sqty-${productId}-${rawVal.trim().replace(/[^a-zA-Z0-9]/g,'_')}">${qty}</span>
+              <button class="size-qty-btn" data-val="${rawVal.trim()}" data-delta="1">＋</button>
+            </div>
+          </td>`;
+
+        tr.querySelectorAll('.size-qty-btn').forEach(btn => {
+          btn.onclick = () => {
+            const val   = btn.dataset.val;
+            const delta = parseInt(btn.dataset.delta);
+            const cur   = popupSizeQtys[val] || 0;
+            const next  = Math.max(0, cur + delta);
+            if (next === 0) delete popupSizeQtys[val];
+            else popupSizeQtys[val] = next;
+            // 表示更新
+            const numEl = tr.querySelector('.size-qty-num');
+            numEl.textContent = next;
+            numEl.classList.toggle('active', next > 0);
+            tr.querySelectorAll('.size-qty-btn[data-delta="-1"]').forEach(b => b.disabled = (next === 0));
+            document.getElementById('product-popup-error').textContent = '';
+          };
+        });
+        tbody.appendChild(tr);
+      });
+      div.appendChild(table);
+      groupsEl.appendChild(div);
+    });
+  } else {
+    // オプションなし → シンプルな個数のみ
+    const row = document.createElement('div');
+    row.className = 'product-popup-qty-row';
+    row.innerHTML = `
+      <span class="product-popup-qty-label">個 数</span>
+      <div class="product-popup-qty-ctrl">
+        <button class="product-popup-qty-btn" id="popup-qty-minus" onclick="popupChangeQty(-1)" ${popupQty<=1?'disabled':''}>−</button>
+        <span class="product-popup-qty-num" id="popup-qty-num">${popupQty}</span>
+        <button class="product-popup-qty-btn" onclick="popupChangeQty(1)">＋</button>
+      </div>`;
+    groupsEl.appendChild(row);
+  }
 
   document.getElementById('product-popup-overlay').classList.add('open');
 }
 
-function updatePopupPrice() {
-  const p = config.products.find(p => p.id === popupProductId);
-  if (!p) return;
-  // 選択済みオプションから料金を取得
-  let priceStr = p.price;
-  const opts = Object.values(popupSelections);
-  if (opts.length > 0) {
-    const prices = opts.map(raw => {
-      const parts = raw.split('/').map(s=>s.trim());
-      return parts[1] || '';
-    }).filter(Boolean);
-    if (prices.length > 0) priceStr = prices.join(' + ');
-  }
-  document.getElementById('product-popup-price').textContent = priceStr;
-}
+function updatePopupPrice() {}
 
 function popupChangeQty(delta) {
   popupQty = Math.max(1, popupQty + delta);
-  document.getElementById('popup-qty-num').textContent = popupQty;
-  document.getElementById('popup-qty-minus').disabled = (popupQty <= 1);
+  const numEl = document.getElementById('popup-qty-num');
+  const minBtn = document.getElementById('popup-qty-minus');
+  if (numEl) numEl.textContent = popupQty;
+  if (minBtn) minBtn.disabled = (popupQty <= 1);
 }
 
 function closeProductPopup() {
@@ -598,15 +634,22 @@ function confirmProductPopup() {
   const p = config.products.find(p => p.id === popupProductId);
   if (!p) return;
 
-  // 必須オプションチェック
-  const required = (p.optionGroups||[]).map(g => g.name);
-  const missing  = required.filter(name => !popupSelections[name]);
-  if (missing.length > 0) {
-    document.getElementById('product-popup-error').textContent = `「${missing[0]}」を選択してください`;
-    return;
+  const optionGroups = p.optionGroups || [];
+
+  if (optionGroups.length > 0) {
+    // サイズ別個数チェック：合計1以上必要
+    const totalQty = Object.values(popupSizeQtys).reduce((s,v)=>s+v,0);
+    if (totalQty === 0) {
+      document.getElementById('product-popup-error').textContent = 'サイズと個数を選択してください';
+      return;
+    }
+    // カートにsizeQtys形式で保存
+    cart[popupProductId] = { qty: totalQty, sizeQtys: Object.assign({}, popupSizeQtys), options: {} };
+  } else {
+    // オプションなし → シンプル個数
+    cart[popupProductId] = { qty: popupQty, sizeQtys: {}, options: {} };
   }
 
-  cart[popupProductId] = { qty: popupQty, options: Object.assign({}, popupSelections) };
   hideError('err-product');
   closeProductPopup();
   renderProductGrid();
@@ -628,14 +671,18 @@ function renderCartSummary() {
   items.forEach(([id, v]) => {
     const p = config.products.find(p => p.id == id);
     if (!p) return;
-    const optStr = Object.entries(v.options||{}).map(([k,raw])=>{
-      const parts=raw.split('/').map(s=>s.trim());
-      const n=parts[0];const pr=parts[1]||'';
-      return `${k}：${n}${pr?' '+pr:''}`;
-    }).join(' / ');
+    const sizeQtys=v.sizeQtys||{};
+    const sizeEntries=Object.entries(sizeQtys).filter(([,q])=>q>0);
+    const optStr = sizeEntries.length>0
+      ? sizeEntries.map(([raw,q])=>{
+          const valName=raw.split('/')[0].trim();
+          const valPrice=raw.split('/')[1]?.trim()||'';
+          return `${valName}${valPrice?' '+valPrice:''}　×${q}`;
+        }).join(' / ')
+      : '';
     html += `<div class="cart-item-row">
       <div><p class="cart-item-name">${p.name}</p>${optStr?`<p class="cart-item-option">${optStr}</p>`:''}</div>
-      <span class="cart-item-qty">× ${v.qty}</span>
+      ${sizeEntries.length===0?`<span class="cart-item-qty">× ${v.qty}</span>`:''}
     </div>`;
   });
   html += '</div>';
@@ -730,11 +777,18 @@ function buildCartText() {
   return Object.entries(cart).filter(([,v])=>v.qty>0).map(([id,v])=>{
     const p=config.products.find(p=>p.id==id);
     const name=p?p.name:id;
-    const opts=Object.entries(v.options||{}).map(([k,raw])=>{
-      const valName=raw.split('/')[0].trim();
-      return `${k}:${valName}`;
-    }).join(' ');
-    return `${name}${opts?' ('+opts+')':''} ×${v.qty}`;
+    // サイズ別個数がある場合
+    const sizeQtys=v.sizeQtys||{};
+    const sizeEntries=Object.entries(sizeQtys).filter(([,q])=>q>0);
+    if(sizeEntries.length>0){
+      const detail=sizeEntries.map(([raw,q])=>{
+        const valName=raw.split('/')[0].trim();
+        return `${valName}×${q}`;
+      }).join('、');
+      return `${name}（${detail}）`;
+    }
+    // オプションなし
+    return `${name} ×${v.qty}`;
   }).join(' / ');
 }
 
